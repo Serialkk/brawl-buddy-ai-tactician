@@ -52,6 +52,28 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+                brawl: {
+                    blue: {
+                        DEFAULT: '#3C67E3',
+                        light: '#4E8DFF',
+                        dark: '#284DB3'
+                    },
+                    purple: {
+                        DEFAULT: '#8B5CF6',
+                        light: '#A78BFA',
+                        dark: '#7C3AED'
+                    },
+                    yellow: {
+                        DEFAULT: '#FFDD57',
+                        light: '#FFF1A8',
+                        dark: '#F5A623'
+                    },
+                    red: {
+                        DEFAULT: '#FF5D5D',
+                        light: '#FF8A8A',
+                        dark: '#E93535'
+                    }
+                },
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
