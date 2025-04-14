@@ -6,6 +6,7 @@ import { TeamComposition } from "@/components/TeamComposition";
 import { StrategyGuide } from "@/components/StrategyGuide";
 import { OpponentPrediction } from "@/components/OpponentPrediction";
 import { Dashboard } from "@/components/Dashboard";
+import { Maps } from "@/components/Maps";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("replay");
@@ -20,6 +21,7 @@ const Index = () => {
         {activeTab === "strategy" && <StrategyGuide />}
         {activeTab === "opponent" && <OpponentPrediction />}
         {activeTab === "dashboard" && <Dashboard />}
+        {activeTab === "maps" && <Maps />}
       </main>
     </div>
   );
