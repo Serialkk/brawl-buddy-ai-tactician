@@ -6,7 +6,8 @@ import {
   Activity, 
   Users, 
   BookOpen, 
-  Target, 
+  Target,
+  Layout,
   Menu, 
   X 
 } from "lucide-react";
@@ -46,6 +47,7 @@ export function Navigation({ activeTab, setActiveTab }: {
     { id: 'team', label: 'Team Composition', icon: Users },
     { id: 'strategy', label: 'Strategy Guide', icon: BookOpen },
     { id: 'opponent', label: 'Opponent Prediction', icon: Target },
+    { id: 'dashboard', label: 'Dashboard', icon: Layout },
   ];
 
   return (

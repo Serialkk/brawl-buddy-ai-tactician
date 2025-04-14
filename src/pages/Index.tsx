@@ -5,6 +5,7 @@ import { ReplayAnalysis } from "@/components/ReplayAnalysis";
 import { TeamComposition } from "@/components/TeamComposition";
 import { StrategyGuide } from "@/components/StrategyGuide";
 import { OpponentPrediction } from "@/components/OpponentPrediction";
+import { Dashboard } from "@/components/Dashboard";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("replay");
@@ -18,6 +19,7 @@ const Index = () => {
         {activeTab === "team" && <TeamComposition />}
         {activeTab === "strategy" && <StrategyGuide />}
         {activeTab === "opponent" && <OpponentPrediction />}
+        {activeTab === "dashboard" && <Dashboard />}
       </main>
     </div>
   );
