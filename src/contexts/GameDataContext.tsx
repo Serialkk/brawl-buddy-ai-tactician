@@ -18,6 +18,14 @@ interface GameDataContextType {
 
 const GameDataContext = createContext<GameDataContextType | undefined>(undefined);
 
+// Helper to enhance brawlers with consistent image URLs
+const enhanceBrawlersWithImages = (brawlers: Brawler[]): Brawler[] => {
+  return brawlers.map(brawler => ({
+    ...brawler,
+    image: brawler.image || `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+  }));
+};
+
 export function GameDataProvider({ children }: { children: ReactNode }) {
   const { 
     data: brawlers = [], 
@@ -27,29 +35,29 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     queryKey: ['brawlers'],
     queryFn: async () => {
       try {
-        // Add CDN-based image URLs to local brawlers as a backup
-        const enhancedLocalBrawlers = localBrawlersFallback.map(brawler => ({
-          ...brawler,
-          image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
-        }));
+        console.log("Fetching brawlers data...");
+        
+        // Always enhance local brawlers with image URLs as a backup
+        const enhancedLocalBrawlers = enhanceBrawlersWithImages(localBrawlersFallback);
 
+        // Try to fetch from API
         const loadedBrawlers = await fetchBrawlers();
         
-        if (loadedBrawlers.length === 0) {
+        if (!loadedBrawlers || loadedBrawlers.length === 0) {
+          console.log("No brawlers returned from API, using local data");
           toast.error("Keine Brawlers gefunden, verwende lokale Daten");
           return enhancedLocalBrawlers;
         }
         
-        return loadedBrawlers;
+        console.log(`Fetched ${loadedBrawlers.length} brawlers successfully`);
+        // Make sure all fetched brawlers have proper image URLs
+        return enhanceBrawlersWithImages(loadedBrawlers);
       } catch (error) {
         console.error('Error fetching brawlers in context:', error);
         toast.error("Fehler beim Laden der Brawler, verwende lokale Daten");
         
-        // Return local brawlers with enhanced images as fallback
-        return localBrawlersFallback.map(brawler => ({
-          ...brawler,
-          image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
-        }));
+        // Return enhanced local brawlers as fallback
+        return enhanceBrawlersWithImages(localBrawlersFallback);
       }
     },
     staleTime: 5 * 60 * 1000, // 5 min cache

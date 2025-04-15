@@ -27,6 +27,10 @@ export function OptimizedImage({
       return;
     }
 
+    // Reset states when src changes
+    setIsLoaded(false);
+    setHasError(false);
+
     // Check if the src is a data URL or absolute URL
     const isDataUrl = typeof src === 'string' && src.startsWith('data:');
     const isAbsoluteUrl = typeof src === 'string' && (
@@ -35,6 +39,7 @@ export function OptimizedImage({
     
     // If it's already a data URL or absolute URL, use it directly
     if (isDataUrl || isAbsoluteUrl) {
+      console.log(`Loading image from URL: ${src}`);
       const img = new Image();
       img.src = src as string;
       
@@ -72,25 +77,28 @@ export function OptimizedImage({
       };
     }
 
-    // For relative URLs, handle differently as they might be local project files
-    try {
-      // Try importing as a module (for Vite)
-      const importedSrc = src;
-      setImgSrc(importedSrc as string);
+    // For relative URLs, use them directly as they should be in the public folder
+    setImgSrc(src as string);
+    
+    // We still need to handle errors for relative URLs
+    const img = new Image();
+    img.src = src as string;
+    
+    img.onload = () => {
       setIsLoaded(true);
       setHasError(false);
-    } catch (error) {
-      console.warn(`Failed to load image: ${src}`, error);
+    };
+    
+    img.onerror = () => {
+      console.warn(`Failed to load relative image: ${src}`);
       setImgSrc(fallback);
       setHasError(true);
+      
       if (onError && typeof onError === 'function') {
         // Create a synthetic event-like object for better typing
-        const imgElement = new Image();
-        imgElement.src = src as string;
-        
         const syntheticEvent = {
-          currentTarget: imgElement,
-          target: imgElement,
+          currentTarget: img,
+          target: img,
           preventDefault: () => {},
           stopPropagation: () => {},
           nativeEvent: new Event('error'),
@@ -102,7 +110,12 @@ export function OptimizedImage({
         
         onError(syntheticEvent);
       }
-    }
+    };
+    
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
   }, [src, fallback, onError]);
 
   return (
@@ -116,7 +129,9 @@ export function OptimizedImage({
           hasError ? "opacity-70" : "",
         )}
         loading="lazy"
+        onLoad={() => setIsLoaded(true)}
         onError={(e) => {
+          console.log(`Error in img tag for: ${imgSrc}`);
           setHasError(true);
           setImgSrc(fallback);
           if (onError && typeof onError === 'function') {

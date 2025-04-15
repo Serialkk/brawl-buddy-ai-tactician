@@ -1,12 +1,35 @@
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlers } from '@/data/brawlers';
 
+// Helper to add consistent image URLs to brawlers
+const addImageUrlsToBrawlers = (brawlers: Brawler[]): Brawler[] => {
+  return brawlers.map(brawler => ({
+    ...brawler,
+    image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+  }));
+};
+
 export const fetchBrawlers = async (): Promise<Brawler[]> => {
   try {
+    console.log("Attempting to fetch brawlers from API or cache...");
+    
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    // We'll try the API call first
+    // Check if we have cached data first for faster loading
+    const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
+    if (cachedBrawlers) {
+      const cache = JSON.parse(cachedBrawlers);
+      const { data, timestamp } = cache;
+      
+      // Check if cache is fresh (less than 1 hour)
+      if (Date.now() - timestamp < 60 * 60 * 1000) {
+        console.log('Using cached brawlers data');
+        return data;
+      }
+    }
+    
+    // We'll try the API call if cache is stale or doesn't exist
     try {
       const response = await fetch('https://api.example.com/brawlers', {
         signal: AbortSignal.timeout(3000)  // Timeout after 3 seconds
@@ -17,59 +40,37 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
       }
       
       const data = await response.json();
+      console.log(`API returned ${data.length} brawlers`);
       
-      // Cache the response
+      // Add image URLs if they don't exist
+      const processedBrawlers = addImageUrlsToBrawlers(data);
+      
+      // Cache the processed response
       localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
-        data,
+        data: processedBrawlers,
         timestamp: Date.now(),
       }));
       
-      return data.map((brawler: any) => ({
-        id: brawler.id,
-        name: brawler.name,
-        role: brawler.role,
-        rarity: brawler.rarity,
-        // Use CDN URL instead of local paths
-        image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`,
-        stats: brawler.stats || { health: 0, damage: 0, speed: 'Normal', range: 'Medium' },
-        abilities: brawler.abilities || {
-          basic: 'Basic Attack',
-          super: 'Super',
-          gadget1: 'Gadget',
-          starPower1: 'Star Power'
-        }
-      }));
+      return processedBrawlers;
     } catch (apiError) {
-      console.warn('API fetch failed, checking cache or using local data');
+      console.warn('API fetch failed, using local data', apiError);
       
-      // Check if we have cached data
-      const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
-      if (cachedBrawlers) {
-        const cache = JSON.parse(cachedBrawlers);
-        const { data, timestamp } = cache;
-        
-        // Check if cache is fresh (less than 1 hour)
-        if (Date.now() - timestamp < 60 * 60 * 1000) {
-          console.log('Using cached brawlers data');
-          return data;
-        }
-      }
+      // Use local brawlers with added image URLs
+      console.log(`Using ${localBrawlers.length} local brawlers data`);
+      const enhancedLocalBrawlers = addImageUrlsToBrawlers(localBrawlers);
       
-      // If no cache or cache is stale, use local brawlers but enhance them with better image URLs
-      console.log('Using local brawlers data');
-      return localBrawlers.map(brawler => ({
-        ...brawler,
-        // Add a CDN URL for each brawler based on their ID
-        image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+      // Cache the enhanced local data too
+      localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
+        data: enhancedLocalBrawlers,
+        timestamp: Date.now(),
       }));
+      
+      return enhancedLocalBrawlers;
     }
   } catch (error) {
-    console.error('Error fetching brawlers:', error);
+    console.error('Error in fetchBrawlers:', error);
     // Final fallback to local data with enhanced image URLs
-    return localBrawlers.map(brawler => ({
-      ...brawler,
-      image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
-    }));
+    return addImageUrlsToBrawlers(localBrawlers);
   }
 };
 

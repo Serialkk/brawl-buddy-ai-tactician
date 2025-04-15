@@ -1,7 +1,6 @@
 
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
@@ -52,7 +51,7 @@ export const BrawlerCard = ({
   const placeholderUrls = [
     `https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
     `https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
-    `https://images.unsplash.com/photo-1501286353178-1ec881214838?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`
+    `https://images.unsplash.com/photo-1501286353178-1ec871214838?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`
   ];
   
   // Use hash of brawler name to select a consistent image for each brawler
@@ -71,7 +70,7 @@ export const BrawlerCard = ({
       return image;
     }
     
-    // Try brawl stars API format
+    // Try brawl stars CDN format with different size options
     return `https://cdn.brawlstats.com/brawlers/${id}.png`;
   };
   
