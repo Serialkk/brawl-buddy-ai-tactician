@@ -8,7 +8,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
-import { allBrawlers } from "@/data/brawlers";
+import { brawlers } from "@/data/brawlers";
 
 export const PersonalStats = () => {
   const { user } = useAuth();
@@ -52,7 +52,7 @@ export const PersonalStats = () => {
     .sort((a, b) => (b.games_played || 0) - (a.games_played || 0))
     .slice(0, 5)
     .map(stat => {
-      const brawler = allBrawlers.find(b => b.id === stat.brawler_id);
+      const brawler = brawlers.find(b => b.id === stat.brawler_id);
       return {
         ...stat,
         brawlerName: brawler?.name || `Brawler #${stat.brawler_id}`,
@@ -179,7 +179,7 @@ export const PersonalStats = () => {
             <TableBody>
               {stats && stats.length > 0 ? (
                 stats.map((stat) => {
-                  const brawler = allBrawlers.find(b => b.id === stat.brawler_id);
+                  const brawler = brawlers.find(b => b.id === stat.brawler_id);
                   const statWinRate = stat.games_played ? 
                     ((stat.victories || 0) / stat.games_played * 100).toFixed(1) : 
                     "0";
