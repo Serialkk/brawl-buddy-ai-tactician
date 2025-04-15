@@ -10,6 +10,7 @@ import {
   Target,
   Layout,
   MapPin,
+  BarChart,
   Menu, 
   X 
 } from "lucide-react";
@@ -51,6 +52,7 @@ export function Navigation({ activeTab, setActiveTab }: {
     { id: 'opponent', label: 'Opponent Prediction', icon: Target },
     { id: 'dashboard', label: 'Dashboard', icon: Layout },
     { id: 'maps', label: 'Maps', icon: MapPin },
+    { id: 'stats', label: 'Real-Time Stats', icon: BarChart },
   ];
 
   return (
@@ -126,3 +128,4 @@ export function Navigation({ activeTab, setActiveTab }: {
     </>
   );
 }
+
