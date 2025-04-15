@@ -90,26 +90,11 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Karla', sans-serif; // Eine neue, klare und leicht fettere Schriftart
+    font-family: 'Karla', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold; // Stellen Sie sicher, dass Überschriften fett sind
-    font-family: 'Lilita One', cursive;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Nunito', sans-serif;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
     font-family: 'Lilita One', cursive;
   }
 }
