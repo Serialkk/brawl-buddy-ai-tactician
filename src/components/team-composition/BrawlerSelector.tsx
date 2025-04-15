@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, ThumbsUp, Filter, Star, Info } from "lucide-react";
+import { Users, ThumbsUp, Filter, Star, Info, Loader2 } from "lucide-react";
 import { BrawlerCard } from "./BrawlerCard";
 import { Brawler, brawlerRoles } from "@/data/brawlers";
 
@@ -15,6 +15,7 @@ interface BrawlerSelectorProps {
   onToggleRecommendations: () => void;
   getCompatibility: (id: number) => number | undefined;
   onResetSelection: () => void;
+  isLoading?: boolean;
 }
 
 export const BrawlerSelector = ({
@@ -24,7 +25,8 @@ export const BrawlerSelector = ({
   showRecommendations,
   onToggleRecommendations,
   getCompatibility,
-  onResetSelection
+  onResetSelection,
+  isLoading = false
 }: BrawlerSelectorProps) => {
   const [roleFilter, setRoleFilter] = React.useState("all");
   const [rarityFilter, setRarityFilter] = React.useState("all");
@@ -32,6 +34,10 @@ export const BrawlerSelector = ({
 
   const rarities = useMemo(() => {
     return Array.from(new Set(brawlers.map(b => b.rarity)));
+  }, [brawlers]);
+
+  const roles = useMemo(() => {
+    return Array.from(new Set(brawlers.map(b => b.role)));
   }, [brawlers]);
 
   const filteredBrawlers = useMemo(() => {
@@ -84,7 +90,7 @@ export const BrawlerSelector = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                {brawlerRoles.map(role => (
+                {roles.map(role => (
                   <SelectItem key={role} value={role}>{role}</SelectItem>
                 ))}
               </SelectContent>
@@ -117,38 +123,45 @@ export const BrawlerSelector = ({
           </div>
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {filteredBrawlers.map(brawler => (
-            <BrawlerCard
-              key={brawler.id}
-              id={brawler.id}
-              name={brawler.name}
-              role={brawler.role}
-              rarity={brawler.rarity}
-              image={brawler.image}
-              selected={selectedBrawlers.includes(brawler.id)}
-              onClick={() => onSelectBrawler(brawler.id)}
-              compatibility={showRecommendations ? getCompatibility(brawler.id) : undefined}
-            />
-          ))}
-          
-          {filteredBrawlers.length === 0 && (
-            <div className="col-span-full p-8 text-center">
-              <Info className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-              <p className="text-muted-foreground">No brawlers match your filters.</p>
-              <Button 
-                variant="link" 
-                onClick={() => {
-                  setRoleFilter("all");
-                  setRarityFilter("all");
-                  setSearchQuery("");
-                }}
-              >
-                Clear all filters
-              </Button>
-            </div>
-          )}
-        </div>
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center p-12">
+            <Loader2 className="h-8 w-8 animate-spin text-brawl-purple mb-4" />
+            <p className="text-muted-foreground">Brawler werden geladen...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {filteredBrawlers.map(brawler => (
+              <BrawlerCard
+                key={brawler.id}
+                id={brawler.id}
+                name={brawler.name}
+                role={brawler.role}
+                rarity={brawler.rarity}
+                image={brawler.image}
+                selected={selectedBrawlers.includes(brawler.id)}
+                onClick={() => onSelectBrawler(brawler.id)}
+                compatibility={showRecommendations ? getCompatibility(brawler.id) : undefined}
+              />
+            ))}
+            
+            {filteredBrawlers.length === 0 && (
+              <div className="col-span-full p-8 text-center">
+                <Info className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">No brawlers match your filters.</p>
+                <Button 
+                  variant="link" 
+                  onClick={() => {
+                    setRoleFilter("all");
+                    setRarityFilter("all");
+                    setSearchQuery("");
+                  }}
+                >
+                  Clear all filters
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

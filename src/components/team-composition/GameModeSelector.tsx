@@ -1,15 +1,16 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Gem, Target, Shield, Star, Gauge } from "lucide-react";
+import { Trophy, Gem, Target, Shield, Star, Gauge, Circle, Castle } from "lucide-react";
 
 export const gameModes = [
   { id: "gemGrab", name: "Gem Grab", icon: Gem },
-  { id: "brawlBall", name: "Brawl Ball", icon: Target },  // Changed to Target icon
+  { id: "brawlBall", name: "Brawl Ball", icon: Target },
   { id: "heist", name: "Heist", icon: Shield },
   { id: "bounty", name: "Bounty", icon: Star },
-  { id: "siege", name: "Siege", icon: Gauge },
-  { id: "hotZone", name: "Hot Zone", icon: Gauge }
+  { id: "siege", name: "Siege", icon: Castle },
+  { id: "hotZone", name: "Hot Zone", icon: Circle }
 ];
 
 interface GameModeSelectorProps {

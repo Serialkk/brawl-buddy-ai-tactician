@@ -1,6 +1,5 @@
-
-import React, { useState } from "react";
-import { brawlers } from "@/data/brawlers";
+import React, { useState, useEffect } from "react";
+import { brawlers as localBrawlers } from "@/data/brawlers";
 import { compatibilityData } from "@/data/compatibilityData";
 import { GameModeSelector } from "./team-composition/GameModeSelector";
 import { BrawlerSelector } from "./team-composition/BrawlerSelector";
@@ -11,11 +10,40 @@ import { SavedTeamsMenu } from "./team-composition/SavedTeamsMenu";
 import { analyzeSynergy } from "@/utils/synergyAnalysis";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import { fetchBrawlers } from "@/services/brawlStarsService";
 
 export function TeamComposition() {
   const [selectedMode, setSelectedMode] = useState("gemGrab");
   const [selectedBrawlers, setSelectedBrawlers] = useState<number[]>([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [brawlers, setBrawlers] = useState(localBrawlers);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch brawlers on component mount
+  useEffect(() => {
+    const loadBrawlers = async () => {
+      setIsLoading(true);
+      try {
+        const brawlersList = await fetchBrawlers();
+        if (brawlersList && brawlersList.length > 0) {
+          setBrawlers(brawlersList);
+          toast.success(`${brawlersList.length} Brawler geladen!`);
+        } else {
+          // Fallback to local brawlers if API returns empty
+          toast.error("Konnte keine Brawler laden, verwende lokale Daten");
+          setBrawlers(localBrawlers);
+        }
+      } catch (error) {
+        console.error("Error loading brawlers:", error);
+        toast.error("Fehler beim Laden der Brawler, verwende lokale Daten");
+        setBrawlers(localBrawlers);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBrawlers();
+  }, []);
 
   const handleBrawlerSelect = (id: number) => {
     if (selectedBrawlers.includes(id)) {
@@ -119,6 +147,7 @@ export function TeamComposition() {
         onToggleRecommendations={() => setShowRecommendations(!showRecommendations)}
         getCompatibility={getCompatibility}
         onResetSelection={resetSelections}
+        isLoading={isLoading}
       />
 
       {selectedBrawlers.length >= 2 && (
