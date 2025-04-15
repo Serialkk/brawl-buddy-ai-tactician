@@ -26,7 +26,16 @@ const Index = () => {
         {activeTab === 'stats' && <RealTimeStats />}
         {activeTab === 'replay' && <ReplayAnalysis />}
         {activeTab === 'opponent' && <OpponentPrediction />}
-        {activeTab === 'analysis' && <AdvancedTeamAnalysis />}
+        {activeTab === 'analysis' && <AdvancedTeamAnalysis 
+          selectedBrawlers={[]} 
+          brawlers={[]}
+          synergyData={{
+            overallScore: 0,
+            strengths: [],
+            weaknesses: []
+          }}
+          gameMode="gemGrab"
+        />}
       </main>
     </div>
   );

@@ -15,11 +15,15 @@ export function OptimizedImage({
   lowQualitySrc,
   ...props
 }: OptimizedImageProps) {
-  const [imgSrc, setImgSrc] = useState<string>(lowQualitySrc || fallback);
+  const [imgSrc, setImgSrc] = useState<string>(lowQualitySrc || src as string || fallback);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    if (!src) return;
+    if (!src) {
+      setImgSrc(fallback);
+      return;
+    }
 
     const img = new Image();
     img.src = src as string;
@@ -27,11 +31,19 @@ export function OptimizedImage({
     img.onload = () => {
       setImgSrc(src as string);
       setIsLoaded(true);
+      setHasError(false);
     };
     
     img.onerror = () => {
       console.warn(`Failed to load image: ${src}`);
       setImgSrc(fallback);
+      setHasError(true);
+    };
+
+    // Clean up
+    return () => {
+      img.onload = null;
+      img.onerror = null;
     };
   }, [src, fallback]);
 
@@ -43,6 +55,7 @@ export function OptimizedImage({
         className={cn(
           "transition-opacity duration-300 ease-in-out",
           !isLoaded && lowQualitySrc ? "filter blur-sm" : "",
+          hasError ? "opacity-70" : "",
           className
         )}
         loading="lazy"

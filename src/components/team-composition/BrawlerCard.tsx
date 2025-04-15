@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface BrawlerCardProps {
   id: number;
@@ -46,8 +47,9 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Vereinfachte Bild-Handling-Strategie
-  const fallbackImageUrl = `/brawlers/${name.toLowerCase().replace(/ /g, "-")}.png`;
+  // Better image fallback strategy
+  const fallbackImageUrl = `/placeholder.svg`;
+  const brawlerImageUrl = image || `/brawlers/${name.toLowerCase().replace(/ /g, "-")}.png`;
   
   return (
     <div 
@@ -68,8 +70,9 @@ export const BrawlerCard = ({
         
         <div className="absolute inset-0 flex items-center justify-center">
           {!imageError ? (
-            <img 
-              src={image || fallbackImageUrl}
+            <OptimizedImage 
+              src={brawlerImageUrl}
+              fallback={fallbackImageUrl}
               alt={name}
               className="object-contain h-full w-full p-2"
               onError={() => setImageError(true)}
@@ -91,7 +94,7 @@ export const BrawlerCard = ({
       <div className="p-3 relative z-20">
         <div className="flex items-center justify-between mb-1">
           <h3 className="font-bold truncate">{name}</h3>
-          <Badge className={cn("shrink-0", rarityColors[rarity] || "bg-gray-600")}>
+          <Badge variant="outline" className={cn("shrink-0", rarityColors[rarity] || "bg-gray-600")}>
             {rarity.split(" ")[0]}
           </Badge>
         </div>
@@ -99,4 +102,4 @@ export const BrawlerCard = ({
       </div>
     </div>
   );
-};
+}
