@@ -1,4 +1,5 @@
 
+import type { Brawler } from "../types/brawler";
 import { startingAndTrophyRoadBrawlers } from "./starting-trophy-brawlers";
 import { rareBrawlers } from "./rare-brawlers";
 import { superRareBrawlers } from "./super-rare-brawlers"; 
@@ -28,4 +29,3 @@ export {
   mythicBrawlers,
   legendaryBrawlers
 };
-
