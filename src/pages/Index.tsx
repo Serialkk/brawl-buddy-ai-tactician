@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { ReplayAnalysis } from "@/components/ReplayAnalysis";
 import { TeamComposition } from "@/components/TeamComposition";
-import { StrategyGuide } from "@/components/StrategyGuide";
+import { StrategyGuide } from "@/components/strategy-guide"; // Updated import path
 import { OpponentPrediction } from "@/components/OpponentPrediction";
 import { Dashboard } from "@/components/Dashboard";
 import { Maps } from "@/components/Maps";
