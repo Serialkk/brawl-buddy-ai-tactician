@@ -20,12 +20,16 @@ interface RecommendedTeamsProps {
 
 export const RecommendedTeams = ({ selectedMode, recommendedComps, brawlers }: RecommendedTeamsProps) => {
   if (!selectedMode) return null;
+  
+  // Find the selected game mode or use a fallback
+  const selectedGameMode = gameModes.find(m => m.id === selectedMode);
+  const gameModeName = selectedGameMode ? selectedGameMode.name : selectedMode;
 
   return (
     <Card className="brawl-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Star className="h-5 w-5 text-brawl-yellow" /> Top Teams for {gameModes.find(m => m.id === selectedMode)?.name}
+          <Star className="h-5 w-5 text-brawl-yellow" /> Top Teams for {gameModeName}
         </CardTitle>
         <CardDescription>
           Meta-analyzed team compositions with the highest win rates
@@ -47,7 +51,22 @@ export const RecommendedTeams = ({ selectedMode, recommendedComps, brawlers }: R
               
               <div className="grid grid-cols-3 gap-4 mb-4">
                 {comp.comp.map(brawlerId => {
-                  const brawler = brawlers.find(b => b.id === brawlerId)!;
+                  // Find the brawler with null check
+                  const brawler = brawlers.find(b => b.id === brawlerId);
+                  
+                  // If brawler not found, show placeholder
+                  if (!brawler) {
+                    return (
+                      <div key={brawlerId} className="p-3 bg-card rounded-lg text-center">
+                        <div className="w-12 h-12 rounded-full bg-muted mx-auto mb-2 flex items-center justify-center">
+                          <span className="text-2xl font-bold">?</span>
+                        </div>
+                        <h4 className="font-bold">Unknown</h4>
+                        <p className="text-xs text-muted-foreground">Missing</p>
+                      </div>
+                    );
+                  }
+                  
                   return (
                     <div 
                       key={brawlerId} 

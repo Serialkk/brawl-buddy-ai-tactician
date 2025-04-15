@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -274,7 +275,7 @@ export function Maps() {
                         <TableHead>Map Name</TableHead>
                         <TableHead>Umgebung</TableHead>
                         {apiMaps.length > 0 && <TableHead>Status</TableHead>}
-                        {!apiMaps.length > 0 && <TableHead>Größe</TableHead>}
+                        {apiMaps.length === 0 && <TableHead>Größe</TableHead>}
                         <TableHead>Veröffentlichung</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -301,7 +302,7 @@ export function Maps() {
                                 </Badge>
                               </TableCell>
                             )}
-                            {!apiMaps.length > 0 && (
+                            {apiMaps.length === 0 && (
                               <TableCell>{map.size}</TableCell>
                             )}
                             <TableCell>
