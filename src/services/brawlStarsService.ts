@@ -30,7 +30,13 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
         role: brawler.role,
         rarity: brawler.rarity,
         image: brawler.image,
-        // ... other brawler properties
+        stats: brawler.stats || { health: 0, damage: 0, speed: 'Normal', range: 'Medium' },
+        abilities: brawler.abilities || {
+          basic: 'Basic Attack',
+          super: 'Super',
+          gadget1: 'Gadget',
+          starPower1: 'Star Power'
+        }
       }));
     } catch (apiError) {
       console.warn('API fetch failed, checking cache or using local data');
@@ -64,8 +70,7 @@ export const fetchMaps = async (): Promise<any[]> => {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    // Return mock data
-    // In a real app, we'd make an API call here
+    // Try to retrieve from cache first
     const cachedMaps = localStorage.getItem('brawl-maps-cache');
     if (cachedMaps) {
       const cache = JSON.parse(cachedMaps);
@@ -78,32 +83,46 @@ export const fetchMaps = async (): Promise<any[]> => {
       }
     }
     
-    const response = await fetch('https://api.example.com/maps');
-    const data = await response.json();
-    
-    // Cache the response
-    localStorage.setItem('brawl-maps-cache', JSON.stringify({
-      data,
-      timestamp: Date.now(),
-    }));
-    
-    // Type guard to check if data has a 'list' property and it's an array
-    if (typeof data === 'object' && data !== null && 'list' in data && Array.isArray((data as {list: any[]}).list)) {
-      return (data as {list: any[]}).list.map(map => ({
-        id: map.id,
-        name: map.name,
-        // ... other map properties
+    // If cache is stale or doesn't exist, try the API
+    try {
+      const response = await fetch('https://api.example.com/maps', {
+        signal: AbortSignal.timeout(3000) // Timeout after 3 seconds
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Cache the response
+      localStorage.setItem('brawl-maps-cache', JSON.stringify({
+        data,
+        timestamp: Date.now(),
       }));
+      
+      // Type guard to check if data has a 'list' property and it's an array
+      if (typeof data === 'object' && data !== null && 'list' in data && Array.isArray((data as {list: any[]}).list)) {
+        return (data as {list: any[]}).list.map(map => ({
+          id: map.id,
+          name: map.name,
+          // ... other map properties
+        }));
+      }
+      
+      return data || [];
+    } catch (apiError) {
+      // If API fails, return an empty array
+      console.warn('API fetch failed for maps, returning empty array');
+      return [];
     }
-    
-    // If the response doesn't have the expected structure, return an empty array
-    return [];
   } catch (error) {
     console.error('Error fetching maps:', error);
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch maps');
+    return [];
   }
 };
 
+// Rest of the file stays the same
 export const getBrawlerRecommendations = async (
   gameMode: string,
   map?: string,

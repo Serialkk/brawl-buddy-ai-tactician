@@ -47,12 +47,24 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Generate a placeholder image URL based on brawler name for consistency
+  // Generate better placeholder images with unique parameters based on brawler name
   const nameForPlaceholder = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const placeholderImage = `https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&h=200&fit=crop&${nameForPlaceholder}`;
+  const placeholderUrls = [
+    `https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
+    `https://images.unsplash.com/photo-1501286353178-1ec881214838?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
+    `https://images.unsplash.com/photo-1487252665478-49b61b47f302?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
+    `https://images.unsplash.com/photo-1441057206919-63d19fac2369?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`
+  ];
+  
+  // Use hash of brawler name to select a consistent image for each brawler
+  const placeholderIndex = Math.abs(nameForPlaceholder.split('').reduce((acc, char) => {
+    return acc + char.charCodeAt(0);
+  }, 0) % placeholderUrls.length);
+  
+  const placeholderImage = placeholderUrls[placeholderIndex];
   
   // Try to use the provided image first, then fallback to a placeholder
-  const brawlerImageUrl = image || placeholderImage;
+  const brawlerImageUrl = image || `https://api.brawlers-assets.com/${nameForPlaceholder}.png` || placeholderImage;
   
   return (
     <div 

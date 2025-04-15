@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchBrawlers, fetchMaps } from '@/services/brawlStarsService';
 import { handleApiError } from '@/utils/apiUtils';
 import { Brawler } from '@/data/types/brawler';
+import { brawlers as localBrawlersFallback } from '@/data/brawlers';
 
 interface GameDataContextType {
   brawlers: Brawler[];
@@ -23,9 +24,18 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     refetch: refetchBrawlers
   } = useQuery({
     queryKey: ['brawlers'],
-    queryFn: fetchBrawlers,
+    queryFn: async () => {
+      try {
+        return await fetchBrawlers();
+      } catch (error) {
+        console.error('Error fetching brawlers in context:', error);
+        // Return local brawlers as fallback if the fetch fails
+        return localBrawlersFallback;
+      }
+    },
     staleTime: 5 * 60 * 1000, // 5 min cache
     refetchOnWindowFocus: false,
+    retry: 2,
     meta: {
       onError: (error: Error) => handleApiError(error, 'Loading brawlers')
     }
@@ -40,6 +50,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     queryFn: fetchMaps,
     staleTime: 5 * 60 * 1000, // 5 min cache
     refetchOnWindowFocus: false,
+    retry: 2, 
     meta: {
       onError: (error: Error) => handleApiError(error, 'Loading maps')
     }

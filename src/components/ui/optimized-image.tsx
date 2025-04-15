@@ -22,12 +22,15 @@ export function OptimizedImage({
   useEffect(() => {
     if (!src) {
       setImgSrc(fallback);
+      setHasError(true);
       return;
     }
 
     // Check if the src is a data URL or absolute URL
-    const isDataUrl = (src as string).startsWith('data:');
-    const isAbsoluteUrl = (src as string).startsWith('http');
+    const isDataUrl = typeof src === 'string' && src.startsWith('data:');
+    const isAbsoluteUrl = typeof src === 'string' && (
+      src.startsWith('http') || src.startsWith('https') || src.startsWith('blob:')
+    );
     
     // If it's already a data URL or absolute URL, use it directly
     if (isDataUrl || isAbsoluteUrl) {
@@ -36,6 +39,7 @@ export function OptimizedImage({
       return;
     }
 
+    // For relative URLs, preload the image
     const img = new Image();
     img.src = src as string;
     
