@@ -161,6 +161,7 @@ export const SynergyAnalysis = ({ selectedBrawlers, brawlers, synergyData }: Syn
           
           <div className="md:w-1/2">
             <div className="h-[300px]">
+              {/* Fix: Wrapping the chart content in a Fragment to make it a single React element */}
               <ChartContainer
                 config={{
                   synergy: {
@@ -172,21 +173,24 @@ export const SynergyAnalysis = ({ selectedBrawlers, brawlers, synergyData }: Syn
                   },
                 }}
               >
-                <ResponsiveContainer>
-                  <RadarChart outerRadius={90} data={chartData}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: "var(--foreground)", fontSize: 12 }} />
-                    <Radar
-                      name="Team Synergy"
-                      dataKey="value"
-                      stroke="var(--color-synergy)"
-                      fill="var(--color-synergy)"
-                      fillOpacity={0.5}
-                    />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </RadarChart>
-                </ResponsiveContainer>
-                <ChartLegend content={<ChartLegendContent />} verticalAlign="top" />
+                {/* The key fix here: Use a Fragment to group the children into a single element */}
+                <>
+                  <ResponsiveContainer>
+                    <RadarChart outerRadius={90} data={chartData}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: "var(--foreground)", fontSize: 12 }} />
+                      <Radar
+                        name="Team Synergy"
+                        dataKey="value"
+                        stroke="var(--color-synergy)"
+                        fill="var(--color-synergy)"
+                        fillOpacity={0.5}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                  <ChartLegend content={<ChartLegendContent />} verticalAlign="top" />
+                </>
               </ChartContainer>
             </div>
           </div>
