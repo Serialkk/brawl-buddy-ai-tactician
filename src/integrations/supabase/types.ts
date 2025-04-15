@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      game_replays: {
+        Row: {
+          brawler_used: number
+          created_at: string
+          game_mode: string
+          id: string
+          map_name: string | null
+          notes: string | null
+          opponent_brawlers: number[] | null
+          replay_data: Json | null
+          replay_title: string
+          result: string
+          team_brawlers: number[] | null
+          user_id: string
+        }
+        Insert: {
+          brawler_used: number
+          created_at?: string
+          game_mode: string
+          id?: string
+          map_name?: string | null
+          notes?: string | null
+          opponent_brawlers?: number[] | null
+          replay_data?: Json | null
+          replay_title: string
+          result: string
+          team_brawlers?: number[] | null
+          user_id: string
+        }
+        Update: {
+          brawler_used?: number
+          created_at?: string
+          game_mode?: string
+          id?: string
+          map_name?: string | null
+          notes?: string | null
+          opponent_brawlers?: number[] | null
+          replay_data?: Json | null
+          replay_title?: string
+          result?: string
+          team_brawlers?: number[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -30,6 +75,99 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      saved_teams: {
+        Row: {
+          brawler_ids: number[]
+          created_at: string
+          game_mode: string
+          id: string
+          notes: string | null
+          team_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          brawler_ids: number[]
+          created_at?: string
+          game_mode: string
+          id?: string
+          notes?: string | null
+          team_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          brawler_ids?: number[]
+          created_at?: string
+          game_mode?: string
+          id?: string
+          notes?: string | null
+          team_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          created_at: string
+          notifications_enabled: boolean | null
+          theme: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          notifications_enabled?: boolean | null
+          theme?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          notifications_enabled?: boolean | null
+          theme?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          brawler_id: number
+          defeats: number | null
+          draws: number | null
+          favorite_game_mode: string | null
+          games_played: number | null
+          id: string
+          last_played: string | null
+          user_id: string
+          victories: number | null
+        }
+        Insert: {
+          brawler_id: number
+          defeats?: number | null
+          draws?: number | null
+          favorite_game_mode?: string | null
+          games_played?: number | null
+          id?: string
+          last_played?: string | null
+          user_id: string
+          victories?: number | null
+        }
+        Update: {
+          brawler_id?: number
+          defeats?: number | null
+          draws?: number | null
+          favorite_game_mode?: string | null
+          games_played?: number | null
+          id?: string
+          last_played?: string | null
+          user_id?: string
+          victories?: number | null
         }
         Relationships: []
       }

@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export const ProtectedRoute = () => {
   const { user, isLoading } = useAuth();
@@ -9,6 +10,7 @@ export const ProtectedRoute = () => {
 
   useEffect(() => {
     if (!isLoading && !user) {
+      toast.error("Please log in to access this page");
       navigate("/auth");
     }
   }, [user, isLoading, navigate]);
