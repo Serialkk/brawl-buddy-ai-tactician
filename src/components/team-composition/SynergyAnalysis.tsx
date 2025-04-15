@@ -15,8 +15,7 @@ import {
   RadarChart, 
   PolarGrid, 
   PolarAngleAxis, 
-  ResponsiveContainer,
-  Tooltip
+  ResponsiveContainer
 } from "recharts";
 import { Users, Shield, Target, Zap, Radar as RadarIcon } from "lucide-react";
 import { SynergyAnalysis as SynergyAnalysisType } from "@/utils/synergyAnalysis";
@@ -93,7 +92,7 @@ export const SynergyAnalysis = ({ selectedBrawlers, brawlers, synergyData }: Syn
                     {synergyData.roleBalance.score}%
                   </span>
                 </div>
-                <Progress className="h-2" value={synergyData.roleBalance.score} 
+                <Progress value={synergyData.roleBalance.score} 
                   className={`h-2 ${getProgressColor(synergyData.roleBalance.score)}`} />
                 <p className="text-xs text-muted-foreground mt-1">{synergyData.roleBalance.comment}</p>
               </div>
@@ -173,18 +172,20 @@ export const SynergyAnalysis = ({ selectedBrawlers, brawlers, synergyData }: Syn
                   },
                 }}
               >
-                <RadarChart outerRadius={90} data={chartData}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: "var(--foreground)", fontSize: 12 }} />
-                  <Radar
-                    name="Team Synergy"
-                    dataKey="value"
-                    stroke="var(--color-synergy)"
-                    fill="var(--color-synergy)"
-                    fillOpacity={0.5}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </RadarChart>
+                <ResponsiveContainer>
+                  <RadarChart outerRadius={90} data={chartData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: "var(--foreground)", fontSize: 12 }} />
+                    <Radar
+                      name="Team Synergy"
+                      dataKey="value"
+                      stroke="var(--color-synergy)"
+                      fill="var(--color-synergy)"
+                      fillOpacity={0.5}
+                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                  </RadarChart>
+                </ResponsiveContainer>
                 <ChartLegend content={<ChartLegendContent />} verticalAlign="top" />
               </ChartContainer>
             </div>
