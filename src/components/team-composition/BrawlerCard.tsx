@@ -47,9 +47,12 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Better image fallback strategy
-  const fallbackImageUrl = `/placeholder.svg`;
-  const brawlerImageUrl = image || `/brawlers/${name.toLowerCase().replace(/ /g, "-")}.png`;
+  // Generate a placeholder image URL based on brawler name for consistency
+  const nameForPlaceholder = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const placeholderImage = `https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&h=200&fit=crop&${nameForPlaceholder}`;
+  
+  // Try to use the provided image first, then fallback to a placeholder
+  const brawlerImageUrl = image || placeholderImage;
   
   return (
     <div 
@@ -72,7 +75,7 @@ export const BrawlerCard = ({
           {!imageError ? (
             <OptimizedImage 
               src={brawlerImageUrl}
-              fallback={fallbackImageUrl}
+              fallback={placeholderImage}
               alt={name}
               className="object-contain h-full w-full p-2"
               onError={() => setImageError(true)}

@@ -1,44 +1,61 @@
 import { Brawler } from '@/data/types/brawler';
+import { brawlers as localBrawlers } from '@/data/brawlers';
 
 export const fetchBrawlers = async (): Promise<Brawler[]> => {
   try {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    // Return mock data
-    // In a real app, we'd make an API call here
-    const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
-    if (cachedBrawlers) {
-      const cache = JSON.parse(cachedBrawlers);
-      const { data, timestamp } = cache;
+    // We'll try the API call first
+    try {
+      const response = await fetch('https://api.example.com/brawlers', {
+        signal: AbortSignal.timeout(3000)  // Timeout after 3 seconds
+      });
       
-      // Check if cache is fresh (less than 1 hour)
-      if (Date.now() - timestamp < 60 * 60 * 1000) {
-        console.log('Using cached brawlers data');
-        return data;
+      if (!response.ok) {
+        throw new Error(`API responded with status ${response.status}`);
       }
+      
+      const data = await response.json();
+      
+      // Cache the response
+      localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
+        data,
+        timestamp: Date.now(),
+      }));
+      
+      return data.map((brawler: any) => ({
+        id: brawler.id,
+        name: brawler.name,
+        role: brawler.role,
+        rarity: brawler.rarity,
+        image: brawler.image,
+        // ... other brawler properties
+      }));
+    } catch (apiError) {
+      console.warn('API fetch failed, checking cache or using local data');
+      
+      // Check if we have cached data
+      const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
+      if (cachedBrawlers) {
+        const cache = JSON.parse(cachedBrawlers);
+        const { data, timestamp } = cache;
+        
+        // Check if cache is fresh (less than 1 hour)
+        if (Date.now() - timestamp < 60 * 60 * 1000) {
+          console.log('Using cached brawlers data');
+          return data;
+        }
+      }
+      
+      // If no cache or cache is stale, use local brawlers
+      console.log('Using local brawlers data');
+      return localBrawlers;
     }
-    
-    const response = await fetch('https://api.example.com/brawlers');
-    const data = await response.json();
-    
-    // Cache the response
-    localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
-      data,
-      timestamp: Date.now(),
-    }));
-    
-    return data.map((brawler: any) => ({
-      id: brawler.id,
-      name: brawler.name,
-      role: brawler.role,
-      rarity: brawler.rarity,
-      image: brawler.image,
-      // ... other brawler properties
-    }));
   } catch (error) {
     console.error('Error fetching brawlers:', error);
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch brawlers');
+    // Final fallback to local data
+    return localBrawlers;
   }
 };
 

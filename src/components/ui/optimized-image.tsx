@@ -25,6 +25,17 @@ export function OptimizedImage({
       return;
     }
 
+    // Check if the src is a data URL or absolute URL
+    const isDataUrl = (src as string).startsWith('data:');
+    const isAbsoluteUrl = (src as string).startsWith('http');
+    
+    // If it's already a data URL or absolute URL, use it directly
+    if (isDataUrl || isAbsoluteUrl) {
+      setImgSrc(src as string);
+      setIsLoaded(true);
+      return;
+    }
+
     const img = new Image();
     img.src = src as string;
     
