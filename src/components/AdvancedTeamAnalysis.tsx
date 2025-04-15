@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AdvancedTeamAnalysisProps {
   selectedBrawlers: number[];
@@ -17,20 +19,20 @@ export function AdvancedTeamAnalysis({ selectedBrawlers, brawlers, synergyData, 
 
   const { overallScore, strengths, weaknesses } = synergyData;
 
-  const getGameModeBadgeColor = (gameMode: string) => {
+  const getGameModeBadgeClass = (gameMode: string) => {
     const modeColors: Record<string, string> = {
-      "gemGrab": "blue",
-      "brawlBall": "yellow",
-      "showdown": "red",
-      "bounty": "purple",
-      "heist": "green",
-      "hotZone": "red",
-      "knockout": "purple",
-      "duels": "yellow",
-      "payload": "green"
+      "gemGrab": "bg-brawl-blue/20 text-brawl-blue",
+      "brawlBall": "bg-brawl-yellow/20 text-brawl-yellow",
+      "showdown": "bg-brawl-red/20 text-brawl-red",
+      "bounty": "bg-brawl-purple/20 text-brawl-purple",
+      "heist": "bg-brawl-blue/20 text-brawl-blue",
+      "hotZone": "bg-brawl-red/20 text-brawl-red",
+      "knockout": "bg-brawl-purple/20 text-brawl-purple",
+      "duels": "bg-brawl-yellow/20 text-brawl-yellow",
+      "payload": "bg-brawl-blue/20 text-brawl-blue"
     };
     
-    return modeColors[gameMode] || "blue";
+    return modeColors[gameMode] || "bg-brawl-blue/20 text-brawl-blue";
   };
 
   return (
@@ -46,7 +48,7 @@ export function AdvancedTeamAnalysis({ selectedBrawlers, brawlers, synergyData, 
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Gesamt-Synergie-Bewertung:</h3>
-          <Badge variant={getGameModeBadgeColor(gameMode) as "blue" | "purple" | "yellow" | "red" | "green"}>
+          <Badge variant="outline" className={cn(getGameModeBadgeClass(gameMode))}>
             {overallScore}%
           </Badge>
         </div>
