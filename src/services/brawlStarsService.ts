@@ -1,10 +1,12 @@
 
 import { Brawler } from "@/data/types/brawler";
+import { handleApiError } from "@/utils/apiUtils";
 
 // API endpoints
 const BRAWL_API_URL = "https://api.brawlapi.com/v1";
+const CACHE_DURATION = 3600000; // 1 hour in milliseconds
 
-// Interface für die API-Antwort
+// API response interfaces
 interface BrawlAPIResponse {
   list: BrawlApiBrawler[];
 }
@@ -33,9 +35,57 @@ interface BrawlApiBrawler {
   imageUrl3: string;
 }
 
-// API-Brawler in unser Brawler-Model konvertieren
+// Simple in-memory cache
+interface CacheItem<T> {
+  data: T;
+  timestamp: number;
+}
+
+const cache: Record<string, CacheItem<any>> = {};
+
+// Generic function to fetch with caching
+async function fetchWithCache<T>(
+  url: string,
+  cacheKey: string,
+  fetchOptions?: RequestInit,
+  cacheDuration: number = CACHE_DURATION
+): Promise<T> {
+  // Check cache first
+  const cachedItem = cache[cacheKey];
+  const now = Date.now();
+  
+  // Return cached data if valid
+  if (cachedItem && now - cachedItem.timestamp < cacheDuration) {
+    console.log(`Using cached data for ${cacheKey}`);
+    return cachedItem.data;
+  }
+  
+  try {
+    // Fetch fresh data
+    const response = await fetch(url, fetchOptions);
+    
+    if (!response.ok) {
+      throw new Error(`API responded with status ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Cache the result
+    cache[cacheKey] = {
+      data,
+      timestamp: now
+    };
+    
+    return data;
+  } catch (error) {
+    console.error(`Error fetching ${url}:`, error);
+    throw error;
+  }
+}
+
+// Convert API brawler to our model
 const mapApiBrawlerToModel = (apiBrawler: BrawlApiBrawler): Brawler => {
-  // Hole die Rolle entweder aus role oder class (API scheint beides zu verwenden)
+  // Get role from either role or class (API seems to use both)
   const roleName = apiBrawler.role?.name || apiBrawler.class?.name || "Unknown";
   
   return {
@@ -45,7 +95,7 @@ const mapApiBrawlerToModel = (apiBrawler: BrawlApiBrawler): Brawler => {
     rarity: apiBrawler.rarity?.name || "Unknown",
     image: apiBrawler.imageUrl || `/brawlers/${apiBrawler.name.toLowerCase().replace(/ /g, "-")}.png`,
     stats: {
-      health: 0, // Diese Werte sind in der API nicht verfügbar
+      health: 0, // These values aren't available in the API
       damage: 0,
       speed: "Normal",
       range: "Medium"
@@ -59,19 +109,19 @@ const mapApiBrawlerToModel = (apiBrawler: BrawlApiBrawler): Brawler => {
   };
 };
 
-// Alle Brawler abrufen
+// Fetch all brawlers
 export const fetchBrawlers = async (): Promise<Brawler[]> => {
   try {
-    const response = await fetch(`${BRAWL_API_URL}/brawlers`);
-    if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
-    }
-    
-    const data: BrawlAPIResponse = await response.json();
+    const data: BrawlAPIResponse = await fetchWithCache(
+      `${BRAWL_API_URL}/brawlers`,
+      'brawlers',
+      undefined,
+      CACHE_DURATION
+    );
     
     if (!data.list || !Array.isArray(data.list)) {
-      console.error("Ungültiges API-Antwortformat:", data);
-      throw new Error("Ungültiges API-Antwortformat");
+      console.error("Invalid API response format:", data);
+      throw new Error("Invalid API response format");
     }
     
     console.log(`API returned ${data.list.length} brawlers`);
@@ -80,33 +130,44 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
       .filter(b => b.released)
       .map(mapApiBrawlerToModel);
   } catch (error) {
-    console.error("Fehler beim Abrufen der Brawler:", error);
-    // Auf lokale Daten zurückfallen, wenn die API fehlschlägt
+    handleApiError(error, "Brawler fetch");
+    // Fall back to local data when API fails
     const { brawlers } = await import('@/data/brawlers');
     return brawlers;
   }
 };
 
-// Maps von der API abrufen
+// Fetch maps from the API
 export const fetchMaps = async (): Promise<any[]> => {
   try {
-    const response = await fetch(`${BRAWL_API_URL}/maps`);
-    if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
-    }
-    
-    const data = await response.json();
+    const data = await fetchWithCache(
+      `${BRAWL_API_URL}/maps`,
+      'maps',
+      undefined,
+      CACHE_DURATION
+    );
     
     if (!data.list || !Array.isArray(data.list)) {
-      console.error("Ungültiges API-Antwortformat für Karten:", data);
-      throw new Error("Ungültiges API-Antwortformat für Karten");
+      console.error("Invalid API response format for maps:", data);
+      throw new Error("Invalid API response format for maps");
     }
     
     console.log(`API returned ${data.list.length} maps`);
     
     return data.list.filter((map: any) => map.disabled !== true);
   } catch (error) {
-    console.error("Fehler beim Abrufen der Karten:", error);
-    return []; // Leeres Array zurückgeben, wenn die API fehlschlägt
+    handleApiError(error, "Maps fetch");
+    return []; // Return empty array when API fails
+  }
+};
+
+// Clear cache (useful for manual refreshes)
+export const clearCache = (key?: string) => {
+  if (key) {
+    delete cache[key];
+    console.log(`Cleared cache for ${key}`);
+  } else {
+    Object.keys(cache).forEach(k => delete cache[k]);
+    console.log("Cleared all cache");
   }
 };

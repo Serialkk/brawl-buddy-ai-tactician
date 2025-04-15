@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BrawlCard, BrawlBadge, GradientText } from "@/components/ui/brawl-classes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { fetchMaps } from "@/services/brawlStarsService";
 import { toast } from "sonner";
+import { useGameData } from "@/contexts/GameDataContext";
+import { useResponsive } from "@/hooks/useResponsive";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 // Statische Fallback-Daten für den Fall, dass die API fehlschlägt
 const gameModesWithMaps = [
@@ -94,66 +95,47 @@ export function Maps() {
   const [selectedMode, setSelectedMode] = useState("Gem Grab");
   const [searchQuery, setSearchQuery] = useState("");
   const [environmentFilter, setEnvironmentFilter] = useState<string>("all");
-  const [apiMaps, setApiMaps] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { maps: apiMaps, isMapsLoading, refetchMaps } = useGameData();
   const [gameModes, setGameModes] = useState<string[]>([]);
+  const { md } = useResponsive();
 
-  // Lade Maps von der API beim Komponenten-Mount
+  // Use game data context instead of direct fetch
   useEffect(() => {
-    const loadMaps = async () => {
-      setIsLoading(true);
-      try {
-        const maps = await fetchMaps();
-        if (maps && maps.length > 0) {
-          setApiMaps(maps);
-          
-          // Extrahiere einzigartige Spielmodi aus der API-Antwort
-          const uniqueModes = Array.from(new Set(maps.map((map: any) => map.gameMode.name)));
-          setGameModes(uniqueModes);
-          
-          // Setze den ersten Modus als Standard, wenn verfügbar
-          if (uniqueModes.length > 0) {
-            setSelectedMode(uniqueModes[0]);
-          }
-          
-          toast.success(`${maps.length} Maps geladen!`);
-        } else {
-          // Fallback zu statischen Daten, wenn die API leere Daten zurückgibt
-          setGameModes(gameModesWithMaps.map(mode => mode.name));
-          toast.error("Konnte keine Maps laden, verwende lokale Daten");
-        }
-      } catch (error) {
-        console.error("Fehler beim Laden der Maps:", error);
-        setGameModes(gameModesWithMaps.map(mode => mode.name));
-        toast.error("Fehler beim Laden der Maps, verwende lokale Daten");
-      } finally {
-        setIsLoading(false);
+    if (apiMaps && apiMaps.length > 0) {
+      // Extract unique game modes from API response
+      const uniqueModes = Array.from(new Set(apiMaps.map((map: any) => map.gameMode?.name || "Unknown")));
+      setGameModes(uniqueModes);
+      
+      // Set first mode as default if available
+      if (uniqueModes.length > 0) {
+        setSelectedMode(uniqueModes[0]);
       }
-    };
+    } else {
+      // Fallback to static data
+      setGameModes(gameModesWithMaps.map(mode => mode.name));
+    }
+  }, [apiMaps]);
 
-    loadMaps();
-  }, []);
-
-  // Extrahiere alle einzigartigen Umgebungen
-  const allEnvironments = apiMaps.length > 0
-    ? Array.from(new Set(apiMaps.map(map => map.environment?.name || "Unknown")))
+  // Extract all unique environments
+  const allEnvironments = apiMaps && apiMaps.length > 0
+    ? Array.from(new Set(apiMaps.map((map: any) => map.environment?.name || "Unknown")))
     : Array.from(new Set(gameModesWithMaps.flatMap(mode => mode.maps.map(map => map.environment))));
 
-  // Hole die aktuell ausgewählten Maps
+  // Get currently selected maps
   const getCurrentMaps = () => {
-    if (apiMaps.length > 0) {
-      return apiMaps.filter(map => map.gameMode.name === selectedMode);
+    if (apiMaps && apiMaps.length > 0) {
+      return apiMaps.filter((map: any) => map.gameMode?.name === selectedMode);
     }
 
-    // Fallback zu statischen Daten
+    // Fallback to static data
     const currentMode = gameModesWithMaps.find(mode => mode.name === selectedMode) || gameModesWithMaps[0];
     return currentMode.maps;
   };
   
-  // Filtere Maps basierend auf Suche und Umgebungsfilter
+  // Filter maps based on search and environment filter
   const filteredMaps = getCurrentMaps().filter((map: any) => {
-    const mapName = apiMaps.length > 0 ? map.name : map.name;
-    const mapEnvironment = apiMaps.length > 0 ? (map.environment?.name || "Unknown") : map.environment;
+    const mapName = apiMaps && apiMaps.length > 0 ? map.name : map.name;
+    const mapEnvironment = apiMaps && apiMaps.length > 0 ? (map.environment?.name || "Unknown") : map.environment;
     
     const matchesSearch = mapName.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesEnvironment = environmentFilter === "all" || mapEnvironment === environmentFilter;
@@ -162,12 +144,12 @@ export function Maps() {
   });
 
   const getModeBadgeColor = (mode: string) => {
-    if (apiMaps.length === 0) {
+    if (!apiMaps || apiMaps.length === 0) {
       const modeData = gameModesWithMaps.find(m => m.name === mode);
       return modeData?.color || "blue";
     }
     
-    // Einfache Farben basierend auf dem Modus-Namen zuweisen
+    // Simple colors based on mode name
     const modeColors: Record<string, string> = {
       "Gem Grab": "blue",
       "Brawl Ball": "yellow",
@@ -183,6 +165,10 @@ export function Maps() {
     return modeColors[mode] || "blue";
   };
 
+  const handleRefresh = async () => {
+    await refetchMaps();
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center max-w-2xl mx-auto mb-8">
@@ -194,7 +180,7 @@ export function Maps() {
         </p>
       </div>
       
-      {isLoading ? (
+      {isMapsLoading ? (
         <Card className="bg-card border border-border shadow-md">
           <CardContent className="flex flex-col items-center justify-center p-12">
             <Loader2 className="h-12 w-12 animate-spin text-brawl-purple mb-4" />
@@ -204,10 +190,22 @@ export function Maps() {
       ) : (
         <Card className="bg-card border border-border shadow-md">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2">
-              <Map className="h-5 w-5 text-brawl-blue" /> Spielmodi
-            </CardTitle>
-            <CardDescription>Wähle einen Spielmodus, um seine Maps anzuzeigen</CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Map className="h-5 w-5 text-brawl-blue" /> Spielmodi
+                </CardTitle>
+                <CardDescription>Wähle einen Spielmodus, um seine Maps anzuzeigen</CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh}
+                className="hidden md:flex"
+              >
+                Aktualisieren
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2 justify-center mb-6">
@@ -250,7 +248,7 @@ export function Maps() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Alle Umgebungen</SelectItem>
-                      {allEnvironments.map(env => (
+                      {allEnvironments.map((env: string) => (
                         <SelectItem key={env} value={env}>{env}</SelectItem>
                       ))}
                     </SelectContent>
@@ -274,41 +272,41 @@ export function Maps() {
                       <TableRow>
                         <TableHead>Map Name</TableHead>
                         <TableHead>Umgebung</TableHead>
-                        {apiMaps.length > 0 && <TableHead>Status</TableHead>}
-                        {apiMaps.length === 0 && <TableHead>Größe</TableHead>}
+                        {apiMaps && apiMaps.length > 0 && <TableHead>Status</TableHead>}
+                        {(!apiMaps || apiMaps.length === 0) && <TableHead>Größe</TableHead>}
                         <TableHead>Veröffentlichung</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredMaps.length > 0 ? (
-                        filteredMaps.map((map: any, idx) => (
-                          <TableRow key={apiMaps.length > 0 ? map.id : map.name} className="hover:bg-muted/50">
+                        filteredMaps.map((map: any, idx: number) => (
+                          <TableRow key={apiMaps && apiMaps.length > 0 ? map.id : map.name} className="hover:bg-muted/50">
                             <TableCell className="font-medium">
-                              {apiMaps.length > 0 ? map.name : map.name}
+                              {apiMaps && apiMaps.length > 0 ? map.name : map.name}
                             </TableCell>
                             <TableCell>
                               <Badge className={
-                                apiMaps.length > 0
+                                apiMaps && apiMaps.length > 0
                                   ? (environmentColors[map.environment?.name] || 'bg-gray-600')
                                   : (environmentColors[map.environment] || 'bg-gray-600')
                               }>
-                                {apiMaps.length > 0 ? (map.environment?.name || "Unknown") : map.environment}
+                                {apiMaps && apiMaps.length > 0 ? (map.environment?.name || "Unknown") : map.environment}
                               </Badge>
                             </TableCell>
-                            {apiMaps.length > 0 && (
+                            {apiMaps && apiMaps.length > 0 && (
                               <TableCell>
                                 <Badge className={map.disabled ? 'bg-red-600' : 'bg-green-600'}>
                                   {map.disabled ? "Deaktiviert" : "Aktiv"}
                                 </Badge>
                               </TableCell>
                             )}
-                            {apiMaps.length === 0 && (
+                            {(!apiMaps || apiMaps.length === 0) && (
                               <TableCell>{map.size}</TableCell>
                             )}
                             <TableCell>
                               <div className="flex items-center text-sm text-muted-foreground">
                                 <Clock className="h-3 w-3 mr-1" />
-                                {apiMaps.length > 0 ? 
+                                {apiMaps && apiMaps.length > 0 ? 
                                   (map.dateAdded ? new Date(map.dateAdded).toLocaleDateString() : "Unbekannt") : 
                                   map.releaseDate}
                               </div>
@@ -332,7 +330,7 @@ export function Maps() {
                   <div className="p-4 bg-muted/20 border-t border-border text-sm text-muted-foreground flex items-center justify-center gap-2">
                     <Info className="h-4 w-4" />
                     <span>
-                      {apiMaps.length > 0 
+                      {apiMaps && apiMaps.length > 0 
                         ? "Map-Daten basierend auf der Brawl Stars API"
                         : "Map-Daten basierend auf Informationen aus Brawl Stars Ressourcen."}
                     </span>
