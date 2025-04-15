@@ -6,6 +6,8 @@ import { GameModeSelector } from "./team-composition/GameModeSelector";
 import { BrawlerSelector } from "./team-composition/BrawlerSelector";
 import { RecommendedTeams } from "./team-composition/RecommendedTeams";
 import { SelectedTeamDisplay } from "./team-composition/SelectedTeamDisplay";
+import { SynergyAnalysis } from "./team-composition/SynergyAnalysis";
+import { analyzeSynergy } from "@/utils/synergyAnalysis";
 
 export function TeamComposition() {
   const [selectedMode, setSelectedMode] = useState("gemGrab");
@@ -60,6 +62,12 @@ export function TeamComposition() {
     return compatibilityData[selectedMode] || [];
   };
 
+  const selectedBrawlerData = selectedBrawlers.map(id => 
+    brawlers.find(b => b.id === id)!
+  );
+  
+  const synergyData = analyzeSynergy(selectedBrawlerData);
+
   return (
     <div className="space-y-6">
       <div className="text-center max-w-2xl mx-auto mb-8">
@@ -85,6 +93,14 @@ export function TeamComposition() {
         getCompatibility={getCompatibility}
         onResetSelection={resetSelections}
       />
+
+      {selectedBrawlers.length >= 2 && (
+        <SynergyAnalysis
+          selectedBrawlers={selectedBrawlers}
+          brawlers={brawlers}
+          synergyData={synergyData}
+        />
+      )}
 
       {selectedMode && (
         <RecommendedTeams
