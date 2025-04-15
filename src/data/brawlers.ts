@@ -4,6 +4,8 @@
 
 export { 
   Brawler, 
-  brawlerRoles,
-  brawlers
+  brawlerRoles
 } from "./brawlers/index";
+
+export { brawlers } from "./brawlers/index";
+

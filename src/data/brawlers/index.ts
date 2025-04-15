@@ -1,5 +1,4 @@
 
-import { Brawler } from "../types/brawler";
 import { startingAndTrophyRoadBrawlers } from "./starting-trophy-brawlers";
 import { rareBrawlers } from "./rare-brawlers";
 import { superRareBrawlers } from "./super-rare-brawlers"; 
@@ -17,8 +16,8 @@ export const brawlers: Brawler[] = [
   ...legendaryBrawlers
 ];
 
-// Re-export brawler types and roles
-export { Brawler, brawlerRoles } from "../types/brawler";
+// Re-export brawler types and roles using export type
+export type { Brawler, brawlerRoles } from "../types/brawler";
 
 // Export individual category arrays
 export {
@@ -29,3 +28,4 @@ export {
   mythicBrawlers,
   legendaryBrawlers
 };
+
