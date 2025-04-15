@@ -2,35 +2,141 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThumbsDown } from "lucide-react";
-import { BookOpen, Map, Crosshair, BarChart, Timer, Zap, ThumbsUp } from "lucide-react";
+import { BookOpen, Map, Crosshair, BarChart, Timer, Zap, ThumbsUp, MoveHorizontal, MoveVertical, Target, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-const positioningMap = (
-  <div className="aspect-square max-w-md mx-auto relative border-2 border-muted rounded-lg overflow-hidden bg-secondary">
-    <div className="grid grid-cols-3 grid-rows-3 h-full">
-      {Array(9).fill(0).map((_, i) => (
-        <div key={i} className="border border-muted/50 flex items-center justify-center">
-          {i === 4 ? (
-            <div className="w-12 h-12 rounded-full bg-brawl-yellow/70 animate-pulse"></div>
-          ) : i === 1 || i === 3 || i === 5 || i === 7 ? (
-            <div className="w-8 h-8 rounded-full bg-brawl-blue/50"></div>
-          ) : null}
+// Create specific positioning maps for each brawler
+const createPositioningMap = (brawlerName) => {
+  // Default positions
+  let playerPosition = { x: 50, y: 50 }; // center
+  let teammatePositions = [
+    { x: 25, y: 25 },
+    { x: 75, y: 25 },
+    { x: 25, y: 75 },
+    { x: 75, y: 75 }
+  ];
+  let obstacles = [
+    { x: 25, y: 50, width: 10, height: 25, rotation: 0 },
+    { x: 75, y: 50, width: 10, height: 25, rotation: 0 },
+    { x: 50, y: 25, width: 25, height: 10, rotation: 0 },
+    { x: 50, y: 75, width: 25, height: 10, rotation: 0 }
+  ];
+  
+  // Brawler-specific positions
+  switch (brawlerName) {
+    case "Shelly":
+      // Bush camper position
+      playerPosition = { x: 30, y: 70 };
+      break;
+    case "Colt":
+      // Long-range position
+      playerPosition = { x: 20, y: 50 };
+      break;
+    case "Brock":
+      // Sniper position
+      playerPosition = { x: 20, y: 20 };
+      break;
+    case "Bull":
+      // Bush ambush position
+      playerPosition = { x: 30, y: 50 };
+      break;
+    case "Jessie":
+      // Middle position for bouncing shots
+      playerPosition = { x: 50, y: 40 };
+      break;
+    case "Nita":
+      // Mid-range position for bear placement
+      playerPosition = { x: 40, y: 40 };
+      break;
+    case "Dynamike":
+      // Safe throw position
+      playerPosition = { x: 25, y: 25 };
+      break;
+    case "El Primo":
+      // Aggressive front position
+      playerPosition = { x: 60, y: 40 };
+      break;
+    case "Barley":
+      // Area denial position
+      playerPosition = { x: 35, y: 35 };
+      break;
+    case "Poco":
+      // Support position
+      playerPosition = { x: 40, y: 60 };
+      break;
+    case "Rosa":
+      // Bush control position
+      playerPosition = { x: 60, y: 60 };
+      break;
+    case "Rico":
+      // Bounce position
+      playerPosition = { x: 35, y: 50 };
+      break;
+    default:
+      // Default center position
+      playerPosition = { x: 50, y: 50 };
+  }
+  
+  return (
+    <div className="aspect-square max-w-md mx-auto relative border-2 border-muted rounded-lg overflow-hidden bg-secondary">
+      <div className="grid grid-cols-3 grid-rows-3 h-full">
+        {Array(9).fill(0).map((_, i) => (
+          <div key={i} className="border border-muted/50 flex items-center justify-center relative">
+            {i === 4 && (
+              <div className="w-12 h-12 rounded-full bg-brawl-yellow/70 animate-pulse absolute" style={{ left: "calc(50% - 24px)", top: "calc(50% - 24px)" }}></div>
+            )}
+          </div>
+        ))}
+        
+        {/* Map features */}
+        {obstacles.map((obstacle, i) => (
+          <div 
+            key={`obstacle-${i}`}
+            className="absolute bg-gray-700/50 rounded"
+            style={{
+              left: `${obstacle.x - obstacle.width/2}%`,
+              top: `${obstacle.y - obstacle.height/2}%`,
+              width: `${obstacle.width}%`,
+              height: `${obstacle.height}%`,
+              transform: `rotate(${obstacle.rotation}deg)`
+            }}
+          ></div>
+        ))}
+        
+        {/* Teammate positions */}
+        {teammatePositions.map((pos, i) => (
+          <div 
+            key={`teammate-${i}`}
+            className="absolute w-8 h-8 rounded-full bg-brawl-blue/50"
+            style={{
+              left: `${pos.x - 4}%`,
+              top: `${pos.y - 4}%`,
+            }}
+          ></div>
+        ))}
+        
+        {/* Player position */}
+        <div 
+          className="absolute"
+          style={{
+            left: `${playerPosition.x}%`,
+            top: `${playerPosition.y}%`,
+            transform: "translate(-50%, -50%)"
+          }}
+        >
+          <div className="w-10 h-10 rounded-full bg-brawl-purple animate-pulse"></div>
         </div>
-      ))}
-      
-      {/* Map features */}
-      <div className="absolute left-1/4 top-1/4 w-8 h-20 bg-gray-700/50 rounded"></div>
-      <div className="absolute right-1/4 top-1/4 w-8 h-20 bg-gray-700/50 rounded"></div>
-      <div className="absolute left-1/3 bottom-1/4 w-20 h-8 bg-gray-700/50 rounded"></div>
-      
-      {/* Player position */}
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <div className="w-10 h-10 rounded-full bg-brawl-purple animate-pulse"></div>
+        
+        {/* Map features - bushes */}
+        <div className="absolute left-[10%] top-[10%] w-[20%] h-[15%] rounded-md bg-green-700/30"></div>
+        <div className="absolute right-[10%] top-[10%] w-[20%] h-[15%] rounded-md bg-green-700/30"></div>
+        <div className="absolute left-[10%] bottom-[10%] w-[15%] h-[20%] rounded-md bg-green-700/30"></div>
+        <div className="absolute right-[10%] bottom-[10%] w-[15%] h-[20%] rounded-md bg-green-700/30"></div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export function StrategyGuide() {
   const [selectedBrawler, setSelectedBrawler] = useState("Shelly");
@@ -267,6 +373,21 @@ export function StrategyGuide() {
       "weak": ["Colt", "Brock", "Rosa"]
     }
   };
+  
+  const positioningTips = {
+    "Shelly": "Utilize bushes for ambushes and stay at medium range to maximize damage. Avoid long open areas where snipers will outrange you.",
+    "Colt": "Stay at maximum range and use walls to your advantage. Position yourself where you can create long sight lines.",
+    "Brock": "Use elevated positions and long sight lines. Stay behind teammates and avoid close combat.",
+    "Bull": "Hide in bushes near high-traffic areas. Don't overextend in open areas where you'll get outranged.",
+    "Jessie": "Position centrally to bounce shots between enemies. Place your turret behind walls for protection.",
+    "Nita": "Stay at mid-range and use your bear to flush enemies from cover. Control chokepoints with your attacks.",
+    "Dynamike": "Stay behind walls and control areas with area denial. Avoid close-combat situations at all costs.",
+    "El Primo": "Use walls to close distance safely. Position yourself between enemies and your teammates as a tank.",
+    "Barley": "Control chokepoints and stay behind cover. Use your area denial to force enemies into disadvantageous positions.",
+    "Poco": "Position yourself behind tanks but in range to heal multiple teammates. Avoid being the frontline.",
+    "Rosa": "Control bushes and use your shield to push enemies back. Be the frontline for your team.",
+    "Rico": "Position at an angle where your shots can bounce. Utilize narrow corridors for maximum effectiveness."
+  };
 
   return (
     <div className="space-y-6">
@@ -389,17 +510,72 @@ export function StrategyGuide() {
               </CardHeader>
               <CardContent>
                 <div className="mb-8">
-                  {positioningMap}
-                  <p className="text-center mt-4 text-sm text-muted-foreground">
-                    Recommended positions shown for {selectedBrawler} (purple) with teammates (blue) and control points (yellow)
-                  </p>
+                  {createPositioningMap(selectedBrawler)}
+                  <div className="text-center mt-4 space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Recommended position for {selectedBrawler} (purple) with teammates (blue) and control points (yellow)
+                    </p>
+                    <div className="flex items-center justify-center gap-4 text-sm">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-brawl-purple"></div>
+                        <span>You</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-brawl-blue/50"></div>
+                        <span>Teammates</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-brawl-yellow/70"></div>
+                        <span>Objective</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-green-700/30"></div>
+                        <span>Bushes</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="p-4 border border-border rounded-lg bg-secondary">
-                  <h3 className="font-bold mb-2 flex items-center gap-2">
-                    <Map className="h-4 w-4 text-brawl-yellow" /> Map Preferences
-                  </h3>
-                  <p>{mapTips[selectedBrawler as keyof typeof mapTips] || "No specific map tips available for this Brawler."}</p>
+                <div className="space-y-4">
+                  <div className="p-4 border border-border rounded-lg bg-secondary">
+                    <h3 className="font-bold mb-2 flex items-center gap-2">
+                      <Map className="h-4 w-4 text-brawl-yellow" /> Positioning Strategy
+                    </h3>
+                    <p>{positioningTips[selectedBrawler as keyof typeof positioningTips] || "No specific positioning tips available for this Brawler."}</p>
+                  </div>
+                  
+                  <div className="p-4 border border-border rounded-lg bg-secondary">
+                    <h3 className="font-bold mb-2 flex items-center gap-2">
+                      <Target className="h-4 w-4 text-brawl-red" /> Range Considerations
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                      <div className="flex flex-col items-center gap-1 p-2 border border-border rounded bg-background">
+                        <MoveHorizontal className="h-5 w-5 text-brawl-blue" />
+                        <span className="font-medium text-sm">Short Range</span>
+                        {(["Bull", "El Primo", "Rosa", "Shelly"].includes(selectedBrawler)) && 
+                          <Badge className="bg-green-600">Optimal</Badge>}
+                      </div>
+                      <div className="flex flex-col items-center gap-1 p-2 border border-border rounded bg-background">
+                        <MoveVertical className="h-5 w-5 text-brawl-purple" />
+                        <span className="font-medium text-sm">Mid Range</span>
+                        {(["Nita", "Poco", "Jessie"].includes(selectedBrawler)) && 
+                          <Badge className="bg-green-600">Optimal</Badge>}
+                      </div>
+                      <div className="flex flex-col items-center gap-1 p-2 border border-border rounded bg-background">
+                        <Target className="h-5 w-5 text-brawl-red" />
+                        <span className="font-medium text-sm">Long Range</span>
+                        {(["Colt", "Brock", "Rico", "Barley", "Dynamike"].includes(selectedBrawler)) && 
+                          <Badge className="bg-green-600">Optimal</Badge>}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border border-border rounded-lg bg-secondary">
+                    <h3 className="font-bold mb-2 flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-brawl-green" /> Map Preferences
+                    </h3>
+                    <p>{mapTips[selectedBrawler as keyof typeof mapTips] || "No specific map tips available for this Brawler."}</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -440,24 +616,4 @@ export function StrategyGuide() {
                     </h3>
                     <div className="space-y-3">
                       {(matchups[selectedBrawler as keyof typeof matchups]?.weak || []).map((enemy, idx) => (
-                        <div key={idx} className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                              <span className="font-bold text-sm">{enemy.charAt(0)}</span>
-                            </div>
-                            <span>{enemy}</span>
-                          </div>
-                          <Badge className="bg-red-600">Disadvantage</Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      )}
-    </div>
-  );
-}
+                        <div key={idx} className="flex items

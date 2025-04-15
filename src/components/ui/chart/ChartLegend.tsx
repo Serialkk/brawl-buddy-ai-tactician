@@ -15,13 +15,7 @@ export const ChartLegend = ({
   verticalAlign = "bottom",
   align = "center",
 }: ChartLegendProps) => {
-  return (
-    <Content
-      payload={[
-        // This is a placeholder that gets replaced by recharts
-      ]}
-    />
-  );
+  return <Content payload={[/* This is a placeholder that gets replaced by recharts */]} />;
 };
 
 interface ChartLegendContentProps {
