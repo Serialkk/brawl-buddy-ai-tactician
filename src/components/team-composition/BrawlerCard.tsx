@@ -43,6 +43,12 @@ export const BrawlerCard = ({
         ? "bg-brawl-yellow" 
         : "bg-brawl-red"
     : "";
+    
+  // Replace placeholder paths with actual Brawl Stars images
+  // Default to public images but support external URLs
+  const imageUrl = image.startsWith('http') 
+    ? image 
+    : `https://cdn.brawlify.com/brawler/${name.toLowerCase().replace(/ /g, "-").replace(/\./g, "")}.png`;
 
   return (
     <div 
@@ -62,16 +68,26 @@ export const BrawlerCard = ({
         <div className="absolute inset-0 bg-gradient-to-br from-brawl-blue/10 to-brawl-purple/20 z-10" />
         
         <div className="absolute inset-0 flex items-center justify-center">
-          <Avatar className="w-3/4 h-3/4 border-4 border-secondary/40 shadow-xl">
-            <AvatarImage 
-              src={image} 
+          <div className="w-full h-full relative flex items-center justify-center">
+            <img 
+              src={imageUrl}
               alt={name}
-              className="object-cover" 
+              className="object-contain h-full w-full p-2"
+              onError={(e) => {
+                // Fallback to default avatar if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  const fallback = document.createElement('div');
+                  fallback.className = "w-16 h-16 flex items-center justify-center bg-secondary rounded-full";
+                  fallback.innerText = name.charAt(0);
+                  parent.appendChild(fallback);
+                }
+              }}
             />
-            <AvatarFallback className="bg-secondary text-5xl font-bold">
-              {name.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
+          </div>
         </div>
         
         {selected && (
