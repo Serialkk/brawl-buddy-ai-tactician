@@ -9,7 +9,7 @@ import { Dashboard } from "@/components/Dashboard";
 import { Maps } from "@/components/Maps";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("replay");
+  const [activeTab, setActiveTab] = useState("team");
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
