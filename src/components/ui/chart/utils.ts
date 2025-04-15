@@ -1,41 +1,27 @@
 
-import { ChartConfig } from "./types";
+import { ChartConfig, THEMES } from "./types";
 
-// Helper to extract item config from a payload.
-export function getPayloadConfigFromPayload(
-  config: ChartConfig,
-  payload: unknown,
-  key: string
-) {
-  if (typeof payload !== "object" || payload === null) {
-    return undefined;
-  }
+export function createColorVariables(config: ChartConfig) {
+  const colorVars: Record<string, string> = {};
 
-  const payloadPayload =
-    "payload" in payload &&
-    typeof payload.payload === "object" &&
-    payload.payload !== null
-      ? payload.payload
-      : undefined;
+  // Process each color config
+  Object.entries(config).forEach(([key, value]) => {
+    if ("color" in value && value.color) {
+      // Direct color value
+      colorVars[`--color-${key}`] = value.color;
+    } else if ("theme" in value && value.theme) {
+      // Theme-specific colors
+      Object.entries(THEMES).forEach(([themeKey, themeSelector]) => {
+        if (value.theme?.[themeKey]) {
+          const varName = `--color-${key}${themeSelector ? "-" + themeKey : ""}`;
+          colorVars[varName] = value.theme[themeKey];
+        }
+      });
+      
+      // Set the default value to the light theme
+      colorVars[`--color-${key}`] = value.theme.light;
+    }
+  });
 
-  let configLabelKey: string = key;
-
-  if (
-    key in payload &&
-    typeof payload[key as keyof typeof payload] === "string"
-  ) {
-    configLabelKey = payload[key as keyof typeof payload] as string;
-  } else if (
-    payloadPayload &&
-    key in payloadPayload &&
-    typeof payloadPayload[key as keyof typeof payloadPayload] === "string"
-  ) {
-    configLabelKey = payloadPayload[
-      key as keyof typeof payloadPayload
-    ] as string;
-  }
-
-  return configLabelKey in config
-    ? config[configLabelKey]
-    : config[key as keyof typeof config];
+  return colorVars;
 }

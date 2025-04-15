@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { brawlers as localBrawlers } from "@/data/brawlers";
 import { compatibilityData } from "@/data/compatibilityData";
@@ -11,6 +12,7 @@ import { analyzeSynergy } from "@/utils/synergyAnalysis";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { fetchBrawlers } from "@/services/brawlStarsService";
+import { AdvancedTeamAnalysis } from "./AdvancedTeamAnalysis";
 
 export function TeamComposition() {
   const [selectedMode, setSelectedMode] = useState("gemGrab");
@@ -155,6 +157,15 @@ export function TeamComposition() {
           selectedBrawlers={selectedBrawlers}
           brawlers={brawlers}
           synergyData={synergyData}
+        />
+      )}
+      
+      {selectedBrawlers.length === 3 && synergyData && (
+        <AdvancedTeamAnalysis
+          selectedBrawlers={selectedBrawlers}
+          brawlers={brawlers}
+          synergyData={synergyData}
+          gameMode={selectedMode}
         />
       )}
 

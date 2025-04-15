@@ -1,66 +1,62 @@
 
 import * as React from "react";
-import * as RechartsPrimitive from "recharts";
-import { cn } from "@/lib/utils";
 import { useChart } from "./ChartContext";
-import { getPayloadConfigFromPayload } from "./utils";
 
-export const ChartLegend = RechartsPrimitive.Legend;
+interface ChartLegendProps {
+  content: React.FC<{
+    payload?: any[];
+  }>;
+  verticalAlign?: "top" | "middle" | "bottom";
+  align?: "left" | "center" | "right";
+}
 
-export const ChartLegendContent = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-      hideIcon?: boolean
-      nameKey?: string
-    }
->(
-  (
-    { className, hideIcon = false, payload, verticalAlign = "bottom", nameKey },
-    ref
-  ) => {
-    const { config } = useChart();
+export const ChartLegend = ({
+  content: Content,
+  verticalAlign = "bottom",
+  align = "center",
+}: ChartLegendProps) => {
+  return (
+    <Content
+      payload={[
+        // This is a placeholder that gets replaced by recharts
+      ]}
+    />
+  );
+};
 
-    if (!payload?.length) {
-      return null;
-    }
+interface ChartLegendContentProps {
+  payload?: any[];
+}
 
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "flex items-center justify-center gap-4",
-          verticalAlign === "top" ? "pb-3" : "pt-3",
-          className
-        )}
-      >
-        {payload.map((item) => {
-          const key = `${nameKey || item.dataKey || "value"}`;
-          const itemConfig = getPayloadConfigFromPayload(config, item, key);
+export const ChartLegendContent = ({ payload }: ChartLegendContentProps) => {
+  const { config } = useChart();
 
-          return (
-            <div
-              key={item.value}
-              className={cn(
-                "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
-              )}
-            >
-              {itemConfig?.icon && !hideIcon ? (
-                <itemConfig.icon />
-              ) : (
-                <div
-                  className="h-2 w-2 shrink-0 rounded-[2px]"
-                  style={{
-                    backgroundColor: item.color,
-                  }}
-                />
-              )}
-              {itemConfig?.label}
-            </div>
-          );
-        })}
-      </div>
-    );
+  if (!payload?.length) {
+    return null;
   }
-);
-ChartLegendContent.displayName = "ChartLegend";
+
+  return (
+    <div className="flex flex-wrap justify-center gap-4 py-2">
+      {payload.map((entry: any, index: number) => {
+        const configItem =
+          config[entry.value] ||
+          Object.values(config).find(
+            (item) => (item as any).dataKey === entry.value
+          );
+        const name = configItem?.label || entry.value;
+
+        return (
+          <div key={index} className="flex items-center gap-1">
+            <div
+              className="h-3 w-3 rounded-full"
+              style={{
+                backgroundColor: entry.color,
+              }}
+            />
+            <span className="text-sm text-muted-foreground">{name}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
