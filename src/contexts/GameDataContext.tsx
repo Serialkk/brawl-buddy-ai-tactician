@@ -5,6 +5,7 @@ import { fetchBrawlers, fetchMaps } from '@/services/brawlStarsService';
 import { handleApiError } from '@/utils/apiUtils';
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlersFallback } from '@/data/brawlers';
+import { toast } from 'sonner';
 
 interface GameDataContextType {
   brawlers: Brawler[];
@@ -26,11 +27,29 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     queryKey: ['brawlers'],
     queryFn: async () => {
       try {
-        return await fetchBrawlers();
+        // Add CDN-based image URLs to local brawlers as a backup
+        const enhancedLocalBrawlers = localBrawlersFallback.map(brawler => ({
+          ...brawler,
+          image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+        }));
+
+        const loadedBrawlers = await fetchBrawlers();
+        
+        if (loadedBrawlers.length === 0) {
+          toast.error("Keine Brawlers gefunden, verwende lokale Daten");
+          return enhancedLocalBrawlers;
+        }
+        
+        return loadedBrawlers;
       } catch (error) {
         console.error('Error fetching brawlers in context:', error);
-        // Return local brawlers as fallback if the fetch fails
-        return localBrawlersFallback;
+        toast.error("Fehler beim Laden der Brawler, verwende lokale Daten");
+        
+        // Return local brawlers with enhanced images as fallback
+        return localBrawlersFallback.map(brawler => ({
+          ...brawler,
+          image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+        }));
       }
     },
     staleTime: 5 * 60 * 1000, // 5 min cache

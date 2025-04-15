@@ -50,10 +50,9 @@ export const BrawlerCard = ({
   // Generate better placeholder images with unique parameters based on brawler name
   const nameForPlaceholder = name.toLowerCase().replace(/[^a-z0-9]/g, '');
   const placeholderUrls = [
+    `https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
     `https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
-    `https://images.unsplash.com/photo-1501286353178-1ec881214838?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
-    `https://images.unsplash.com/photo-1487252665478-49b61b47f302?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
-    `https://images.unsplash.com/photo-1441057206919-63d19fac2369?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`
+    `https://images.unsplash.com/photo-1501286353178-1ec881214838?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`
   ];
   
   // Use hash of brawler name to select a consistent image for each brawler
@@ -63,8 +62,18 @@ export const BrawlerCard = ({
   
   const placeholderImage = placeholderUrls[placeholderIndex];
   
-  // Try to use the provided image first, then fallback to a placeholder
-  const brawlerImageUrl = image || `https://api.brawlers-assets.com/${nameForPlaceholder}.png` || placeholderImage;
+  // Try different image sources in priority order
+  const getImageUrl = () => {
+    if (imageError) return placeholderImage;
+    
+    // If provided image is absolute URL, use it directly
+    if (image && (image.startsWith('http') || image.startsWith('data:'))) {
+      return image;
+    }
+    
+    // Try brawl stars API format
+    return `https://cdn.brawlstats.com/brawlers/${id}.png`;
+  };
   
   return (
     <div 
@@ -84,21 +93,13 @@ export const BrawlerCard = ({
         <div className="absolute inset-0 bg-gradient-to-br from-brawl-blue/10 to-brawl-purple/20 z-10" />
         
         <div className="absolute inset-0 flex items-center justify-center">
-          {!imageError ? (
-            <OptimizedImage 
-              src={brawlerImageUrl}
-              fallback={placeholderImage}
-              alt={name}
-              className="object-contain h-full w-full p-2"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <Avatar className="w-3/4 h-3/4 border-4 border-secondary/40 shadow-xl">
-              <AvatarFallback className="bg-secondary text-4xl font-bold">
-                {name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-          )}
+          <OptimizedImage 
+            src={getImageUrl()}
+            fallback={placeholderImage}
+            alt={name}
+            className="object-contain h-full w-full p-2"
+            onError={() => setImageError(true)}
+          />
         </div>
         
         {selected && (

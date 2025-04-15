@@ -13,9 +13,10 @@ export function OptimizedImage({
   className,
   fallback = '/placeholder.svg',
   lowQualitySrc,
+  onError,
   ...props
 }: OptimizedImageProps) {
-  const [imgSrc, setImgSrc] = useState<string>(lowQualitySrc || src as string || fallback);
+  const [imgSrc, setImgSrc] = useState<string>(lowQualitySrc || fallback);
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -34,33 +35,46 @@ export function OptimizedImage({
     
     // If it's already a data URL or absolute URL, use it directly
     if (isDataUrl || isAbsoluteUrl) {
-      setImgSrc(src as string);
-      setIsLoaded(true);
-      return;
+      const img = new Image();
+      img.src = src as string;
+      
+      img.onload = () => {
+        setImgSrc(src as string);
+        setIsLoaded(true);
+        setHasError(false);
+      };
+      
+      img.onerror = () => {
+        console.warn(`Failed to load image: ${src}`);
+        setImgSrc(fallback);
+        setHasError(true);
+        if (onError && typeof onError === 'function') {
+          onError(new Error(`Failed to load image: ${src}`));
+        }
+      };
+
+      return () => {
+        img.onload = null;
+        img.onerror = null;
+      };
     }
 
-    // For relative URLs, preload the image
-    const img = new Image();
-    img.src = src as string;
-    
-    img.onload = () => {
-      setImgSrc(src as string);
+    // For relative URLs, handle differently as they might be local project files
+    try {
+      // Try importing as a module (for Vite)
+      const importedSrc = src;
+      setImgSrc(importedSrc as string);
       setIsLoaded(true);
       setHasError(false);
-    };
-    
-    img.onerror = () => {
-      console.warn(`Failed to load image: ${src}`);
+    } catch (error) {
+      console.warn(`Failed to load image: ${src}`, error);
       setImgSrc(fallback);
       setHasError(true);
-    };
-
-    // Clean up
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [src, fallback]);
+      if (onError && typeof onError === 'function') {
+        onError(new Error(`Failed to load image: ${src}`));
+      }
+    }
+  }, [src, fallback, onError]);
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
@@ -68,12 +82,18 @@ export function OptimizedImage({
         src={imgSrc}
         alt={alt || "Image"}
         className={cn(
-          "transition-opacity duration-300 ease-in-out",
+          "transition-opacity duration-300 ease-in-out w-full h-full object-cover",
           !isLoaded && lowQualitySrc ? "filter blur-sm" : "",
           hasError ? "opacity-70" : "",
-          className
         )}
         loading="lazy"
+        onError={(e) => {
+          setHasError(true);
+          setImgSrc(fallback);
+          if (onError && typeof onError === 'function') {
+            onError(e);
+          }
+        }}
         {...props}
       />
     </div>

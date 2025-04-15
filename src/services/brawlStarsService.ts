@@ -29,7 +29,8 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
         name: brawler.name,
         role: brawler.role,
         rarity: brawler.rarity,
-        image: brawler.image,
+        // Use CDN URL instead of local paths
+        image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`,
         stats: brawler.stats || { health: 0, damage: 0, speed: 'Normal', range: 'Medium' },
         abilities: brawler.abilities || {
           basic: 'Basic Attack',
@@ -54,14 +55,21 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
         }
       }
       
-      // If no cache or cache is stale, use local brawlers
+      // If no cache or cache is stale, use local brawlers but enhance them with better image URLs
       console.log('Using local brawlers data');
-      return localBrawlers;
+      return localBrawlers.map(brawler => ({
+        ...brawler,
+        // Add a CDN URL for each brawler based on their ID
+        image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+      }));
     }
   } catch (error) {
     console.error('Error fetching brawlers:', error);
-    // Final fallback to local data
-    return localBrawlers;
+    // Final fallback to local data with enhanced image URLs
+    return localBrawlers.map(brawler => ({
+      ...brawler,
+      image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+    }));
   }
 };
 
