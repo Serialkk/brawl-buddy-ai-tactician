@@ -4,7 +4,7 @@ import { useChart } from "./ChartContext";
 import { ChartConfig } from "./types";
 
 interface ChartTooltipProps {
-  content: React.FC<{
+  content: React.ComponentType<{
     active?: boolean;
     payload?: any[];
     label?: string;

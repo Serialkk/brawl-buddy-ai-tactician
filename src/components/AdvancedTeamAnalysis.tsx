@@ -1,4 +1,3 @@
-
 import React, { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -121,7 +120,7 @@ export function AdvancedTeamAnalysis({
       },
       {
         archetype: "Aggro Rush",
-        winRate: controllerCount >= 2 ? 80 : hasTank ? 65 : 50,
+        winRate: controllerCount >= 2 ? 80 : tankCount >= 1 ? 65 : 50,
         counterStrategy: "Keep your distance and use area denial abilities."
       },
       {
@@ -408,10 +407,10 @@ export function AdvancedTeamAnalysis({
                         fill="var(--color-A)"
                         fillOpacity={0.6}
                       />
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartTooltip content={ChartTooltipContent} />
                     </RadarChart>
                   </ResponsiveContainer>
-                  <ChartLegend content={<ChartLegendContent />} verticalAlign="top" />
+                  <ChartLegend content={ChartLegendContent} verticalAlign="top" />
                 </ChartContainer>
               </div>
             </div>
@@ -734,57 +733,4 @@ export function AdvancedTeamAnalysis({
                   
                   {gameMode === "gemGrab" && (
                     <div className="space-y-2">
-                      <p className="text-sm">• Let {synergyData.survivalPotential.score >= 70 ? "your tankiest brawler" : "brawlers with escape abilities"} collect gems</p>
-                      <p className="text-sm">• Control the center area during countdown</p>
-                      <p className="text-sm">• Fall back when holding many gems</p>
-                    </div>
-                  )}
-                  
-                  {gameMode === "brawlBall" && (
-                    <div className="space-y-2">
-                      <p className="text-sm">• {synergyData.damageOutput.score >= 70 ? "Use your damage to clear defenders" : "Focus on team pushes rather than solo goals"}</p>
-                      <p className="text-sm">• Pass the ball to avoid defenders</p>
-                      <p className="text-sm">• Don't bunch up when defending your goal</p>
-                    </div>
-                  )}
-                  
-                  {gameMode === "bounty" && (
-                    <div className="space-y-2">
-                      <p className="text-sm">• {synergyData.rangeBalance.score >= 70 ? "Use your range advantage to keep enemies at bay" : "Watch for flanking maneuvers"}</p>
-                      <p className="text-sm">• Protect teammates with high star counts</p>
-                      <p className="text-sm">• Play conservatively when ahead in stars</p>
-                    </div>
-                  )}
-                  
-                  {gameMode === "heist" && (
-                    <div className="space-y-2">
-                      <p className="text-sm">• {synergyData.damageOutput.score >= 70 ? "Focus on safe damage when possible" : "Create openings for teammates to attack the safe"}</p>
-                      <p className="text-sm">• Split between offense and defense as needed</p>
-                      <p className="text-sm">• Target enemy safe's weak points</p>
-                    </div>
-                  )}
-                  
-                  {gameMode === "siege" && (
-                    <div className="space-y-2">
-                      <p className="text-sm">• {synergyData.controlAbility.score >= 70 ? "Use your control to dominate bolt spawns" : "Focus on collecting bolts in safer areas"}</p>
-                      <p className="text-sm">• Defend your IKE with area denial when possible</p>
-                      <p className="text-sm">• Support your siege bot's push as a team</p>
-                    </div>
-                  )}
-                  
-                  {gameMode === "hotZone" && (
-                    <div className="space-y-2">
-                      <p className="text-sm">• {synergyData.controlAbility.score >= 70 ? "Use your area control to lock down zones" : "Rotate between zones based on enemy positions"}</p>
-                      <p className="text-sm">• Prioritize holding one zone completely over partial control of multiple</p>
-                      <p className="text-sm">• Focus on eliminating enemies before capturing zones</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
-}
+                      <

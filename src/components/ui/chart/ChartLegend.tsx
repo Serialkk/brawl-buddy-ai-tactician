@@ -3,7 +3,7 @@ import * as React from "react";
 import { useChart } from "./ChartContext";
 
 interface ChartLegendProps {
-  content: React.FC<{
+  content: React.ComponentType<{
     payload?: any[];
   }>;
   verticalAlign?: "top" | "middle" | "bottom";
