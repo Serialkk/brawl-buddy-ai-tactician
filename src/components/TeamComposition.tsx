@@ -10,6 +10,7 @@ import { SynergyAnalysis } from "./team-composition/SynergyAnalysis";
 import { SavedTeamsMenu } from "./team-composition/SavedTeamsMenu";
 import { analyzeSynergy } from "@/utils/synergyAnalysis";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
 
 export function TeamComposition() {
   const [selectedMode, setSelectedMode] = useState("gemGrab");
@@ -22,6 +23,9 @@ export function TeamComposition() {
     } else {
       if (selectedBrawlers.length < 3) {
         setSelectedBrawlers([...selectedBrawlers, id]);
+        if (selectedBrawlers.length === 2) {
+          toast.success("Team vollständig! Analyse verfügbar.");
+        }
       }
     }
   };
@@ -72,6 +76,7 @@ export function TeamComposition() {
     
     // Then set the brawlers
     setSelectedBrawlers(brawlerIds.slice(0, 3)); // Only take up to 3 brawlers
+    toast.success("Team geladen!");
   };
 
   const selectedBrawlerData = selectedBrawlers.map(id => 
@@ -84,10 +89,10 @@ export function TeamComposition() {
     <div className="space-y-6">
       <div className="text-center max-w-2xl mx-auto mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple">
-          Team Composition Analyzer
+          Team-Zusammenstellungs-Analyse
         </h1>
         <p className="text-muted-foreground">
-          Build the perfect team for any game mode or see which Brawlers work best together.
+          Stelle das perfekte Team für jeden Spielmodus zusammen oder finde heraus, welche Brawler am besten zusammenarbeiten.
         </p>
       </div>
 

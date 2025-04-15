@@ -2,11 +2,11 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Sparkles, Droplet, Shield, Star, Gauge, Target } from "lucide-react";
+import { Trophy, Gem, Futbol, Shield, Star, Gauge, Target } from "lucide-react";
 
 export const gameModes = [
-  { id: "gemGrab", name: "Gem Grab", icon: Sparkles },
-  { id: "brawlBall", name: "Brawl Ball", icon: Droplet },
+  { id: "gemGrab", name: "Gem Grab", icon: Gem },
+  { id: "brawlBall", name: "Brawl Ball", icon: Futbol },
   { id: "heist", name: "Heist", icon: Shield },
   { id: "bounty", name: "Bounty", icon: Star },
   { id: "siege", name: "Siege", icon: Gauge },
@@ -23,9 +23,9 @@ export const GameModeSelector = ({ selectedMode, onSelectMode }: GameModeSelecto
     <Card className="brawl-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-brawl-yellow" /> Game Mode
+          <Trophy className="h-5 w-5 text-brawl-yellow" /> Spielmodus
         </CardTitle>
-        <CardDescription>Select the game mode you want to play</CardDescription>
+        <CardDescription>Wähle den Spielmodus aus, in dem du spielen möchtest</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">

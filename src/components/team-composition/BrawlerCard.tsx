@@ -46,37 +46,9 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Create slugified name for image URLs
-  const cleanName = name.toLowerCase().replace(/ /g, "-").replace(/\./g, "").replace(/'/g, "");
+  // Vereinfachte Bild-Handling-Strategie
+  const fallbackImageUrl = `/brawlers/${name.toLowerCase().replace(/ /g, "-")}.png`;
   
-  // Try multiple reliable image sources
-  const staticImageUrl = `/brawlers/${cleanName}.png`; // Local images in public folder if available
-  const officialApiUrl = `https://api.brawlstars.com/v1/brawlers/${cleanName}/image`;
-  const starListProUrl = `https://cdn.starlist.pro/brawler/${cleanName}.png`;
-  const brawlApiUrl = `https://brawlapi.com/api/brawlers/${id}/image`;
-  
-  // Create an array of image URLs to try in sequence
-  const imageSources = [
-    image.startsWith('http') ? image : null,  // User provided URL
-    staticImageUrl,                           // Local static image if available
-    starListProUrl,                           // StarList Pro CDN
-    `https://brawlassets.s3.amazonaws.com/brawlers/${cleanName}.png`, // Custom S3 bucket
-    `https://raw.githubusercontent.com/supercell-studios/brawlstars-assets/main/brawlers/${cleanName}.png`, // GitHub hosted
-  ].filter(Boolean) as string[];
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const currentImageUrl = imageSources[currentImageIndex] || staticImageUrl;
-
-  const handleImageError = () => {
-    console.log(`Failed to load image from ${currentImageUrl}, trying next source`);
-    if (currentImageIndex < imageSources.length - 1) {
-      setCurrentImageIndex(currentImageIndex + 1);
-    } else {
-      console.log(`All image sources failed for ${name}`);
-      setImageError(true);
-    }
-  };
-
   return (
     <div 
       className={cn(
@@ -97,10 +69,10 @@ export const BrawlerCard = ({
         <div className="absolute inset-0 flex items-center justify-center">
           {!imageError ? (
             <img 
-              src={currentImageUrl}
+              src={image || fallbackImageUrl}
               alt={name}
               className="object-contain h-full w-full p-2"
-              onError={handleImageError}
+              onError={() => setImageError(true)}
             />
           ) : (
             <Avatar className="w-3/4 h-3/4 border-4 border-secondary/40 shadow-xl">
