@@ -2,12 +2,14 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ProfileMenu } from "@/components/ProfileMenu";
 import { 
   Activity, 
   Users, 
   BookOpen, 
   Target,
   Layout,
+  MapPin,
   Menu, 
   X 
 } from "lucide-react";
@@ -48,6 +50,7 @@ export function Navigation({ activeTab, setActiveTab }: {
     { id: 'strategy', label: 'Strategy Guide', icon: BookOpen },
     { id: 'opponent', label: 'Opponent Prediction', icon: Target },
     { id: 'dashboard', label: 'Dashboard', icon: Layout },
+    { id: 'maps', label: 'Maps', icon: MapPin },
   ];
 
   return (
@@ -58,17 +61,20 @@ export function Navigation({ activeTab, setActiveTab }: {
           <span className="text-brawl-blue">Brawl</span>
           <span className="text-brawl-purple">Buddy</span>
         </h1>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <ProfileMenu />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </Button>
+        </div>
       </div>
 
       {mobileMenuOpen && (
@@ -92,14 +98,17 @@ export function Navigation({ activeTab, setActiveTab }: {
 
       {/* Desktop Navigation */}
       <div className="hidden md:flex flex-col gap-2 w-64 p-4 border-r border-border">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brawl-blue to-brawl-purple flex items-center justify-center text-white font-bold text-lg">
-            BB
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brawl-blue to-brawl-purple flex items-center justify-center text-white font-bold text-lg">
+              BB
+            </div>
+            <h2 className="font-bold text-xl">
+              <span className="text-brawl-blue">Brawl</span>
+              <span className="text-brawl-purple">Buddy</span>
+            </h2>
           </div>
-          <h2 className="font-bold text-xl">
-            <span className="text-brawl-blue">Brawl</span>
-            <span className="text-brawl-purple">Buddy</span>
-          </h2>
+          <ProfileMenu />
         </div>
         
         <div className="space-y-2">
