@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { brawlers as localBrawlers } from "@/data/brawlers";
 import { compatibilityData } from "@/data/compatibilityData";
@@ -184,3 +183,5 @@ export function TeamComposition() {
     </div>
   );
 }
+
+export default TeamComposition;

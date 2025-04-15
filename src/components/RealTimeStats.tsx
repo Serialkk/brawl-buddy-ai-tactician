@@ -18,3 +18,5 @@ export function RealTimeStats() {
     </div>
   );
 }
+
+export default RealTimeStats;

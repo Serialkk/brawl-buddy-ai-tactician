@@ -95,7 +95,7 @@ export function Maps() {
   const [selectedMode, setSelectedMode] = useState("Gem Grab");
   const [searchQuery, setSearchQuery] = useState("");
   const [environmentFilter, setEnvironmentFilter] = useState<string>("all");
-  const { maps: apiMaps, isMapsLoading, refetchMaps } = useGameData();
+  const { maps: apiMaps, isLoadingMaps, refetchMaps } = useGameData();
   const [gameModes, setGameModes] = useState<string[]>([]);
   const { md } = useResponsive();
 
@@ -180,7 +180,7 @@ export function Maps() {
         </p>
       </div>
       
-      {isMapsLoading ? (
+      {isLoadingMaps ? (
         <Card className="bg-card border border-border shadow-md">
           <CardContent className="flex flex-col items-center justify-center p-12">
             <Loader2 className="h-12 w-12 animate-spin text-brawl-purple mb-4" />
@@ -344,3 +344,5 @@ export function Maps() {
     </div>
   );
 }
+
+export default Maps;

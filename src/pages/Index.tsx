@@ -1,5 +1,5 @@
 
-import { lazy } from 'react';
+import { useState } from 'react';
 import { lazyLoad } from '@/utils/lazyLoad';
 
 const Navigation = lazyLoad(() => import('@/components/Navigation'));
@@ -13,22 +13,20 @@ const Maps = lazyLoad(() => import('@/components/Maps'));
 const StrategyGuide = lazyLoad(() => import('@/components/strategy-guide/StrategyGuide'));
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+
   return (
     <div className="flex h-screen">
-      <div className="w-64 bg-sidebar-background border-r border-sidebar-border h-full">
-        <Navigation />
-      </div>
+      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
       <main className="flex-1 overflow-auto p-6">
-        <Dashboard />
-        <div className="mt-8">
-          <TeamComposition />
-          <Maps />
-          <StrategyGuide />
-          <RealTimeStats />
-          <ReplayAnalysis />
-          <OpponentPrediction />
-          <AdvancedTeamAnalysis />
-        </div>
+        {activeTab === 'dashboard' && <Dashboard />}
+        {activeTab === 'team' && <TeamComposition />}
+        {activeTab === 'maps' && <Maps />}
+        {activeTab === 'strategy' && <StrategyGuide />}
+        {activeTab === 'stats' && <RealTimeStats />}
+        {activeTab === 'replay' && <ReplayAnalysis />}
+        {activeTab === 'opponent' && <OpponentPrediction />}
+        {activeTab === 'analysis' && <AdvancedTeamAnalysis />}
       </main>
     </div>
   );

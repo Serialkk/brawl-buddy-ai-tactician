@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -128,3 +127,5 @@ export function Navigation({ activeTab, setActiveTab }: {
     </>
   );
 }
+
+export default Navigation;
