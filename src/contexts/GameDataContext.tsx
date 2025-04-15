@@ -1,79 +1,59 @@
 
-import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Brawler } from '@/data/types/brawler';
 import { fetchBrawlers, fetchMaps } from '@/services/brawlStarsService';
-import { toast } from 'sonner';
+import { handleApiError } from '@/utils/apiUtils';
+import { Brawler } from '@/data/types/brawler';
 
 interface GameDataContextType {
   brawlers: Brawler[];
   maps: any[];
-  isBrawlersLoading: boolean;
-  isMapsLoading: boolean;
-  refetchBrawlers: () => Promise<void>;
-  refetchMaps: () => Promise<void>;
+  isLoadingBrawlers: boolean;
+  isLoadingMaps: boolean;
+  refetchBrawlers: () => void;
+  refetchMaps: () => void;
 }
 
 const GameDataContext = createContext<GameDataContextType | undefined>(undefined);
 
 export function GameDataProvider({ children }: { children: ReactNode }) {
   const { 
-    data: brawlersData, 
-    isLoading: isBrawlersLoading, 
-    refetch: refetchBrawlersQuery 
+    data: brawlers = [], 
+    isLoading: isLoadingBrawlers,
+    refetch: refetchBrawlers
   } = useQuery({
     queryKey: ['brawlers'],
     queryFn: fetchBrawlers,
-    staleTime: 60 * 60 * 1000, // 1 hour
-    onError: (error) => {
-      console.error('Failed to fetch brawlers:', error);
-      toast.error('Failed to load brawlers. Using local data.');
+    staleTime: 5 * 60 * 1000, // 5 min cache
+    refetchOnWindowFocus: false,
+    meta: {
+      onError: (error: Error) => handleApiError(error, 'Loading brawlers')
     }
   });
 
   const { 
-    data: mapsData, 
-    isLoading: isMapsLoading, 
-    refetch: refetchMapsQuery 
+    data: maps = [], 
+    isLoading: isLoadingMaps,
+    refetch: refetchMaps
   } = useQuery({
     queryKey: ['maps'],
     queryFn: fetchMaps,
-    staleTime: 60 * 60 * 1000, // 1 hour
-    onError: (error) => {
-      console.error('Failed to fetch maps:', error);
-      toast.error('Failed to load maps. Using local data.');
+    staleTime: 5 * 60 * 1000, // 5 min cache
+    refetchOnWindowFocus: false,
+    meta: {
+      onError: (error: Error) => handleApiError(error, 'Loading maps')
     }
   });
-
-  const refetchBrawlers = async () => {
-    try {
-      await refetchBrawlersQuery();
-      toast.success('Brawlers data refreshed!');
-    } catch (error) {
-      console.error('Error refreshing brawlers:', error);
-      toast.error('Failed to refresh brawlers data');
-    }
-  };
-
-  const refetchMaps = async () => {
-    try {
-      await refetchMapsQuery();
-      toast.success('Maps data refreshed!');
-    } catch (error) {
-      console.error('Error refreshing maps:', error);
-      toast.error('Failed to refresh maps data');
-    }
-  };
 
   return (
     <GameDataContext.Provider
       value={{
-        brawlers: brawlersData || [],
-        maps: mapsData || [],
-        isBrawlersLoading,
-        isMapsLoading,
+        brawlers,
+        maps,
+        isLoadingBrawlers,
+        isLoadingMaps,
         refetchBrawlers,
-        refetchMaps,
+        refetchMaps
       }}
     >
       {children}

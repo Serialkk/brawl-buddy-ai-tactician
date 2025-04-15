@@ -1,8 +1,8 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ImgHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
-interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface OptimizedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
   lowQualitySrc?: string;
 }
@@ -43,7 +43,7 @@ export function OptimizedImage({
         className={cn(
           "transition-opacity duration-300 ease-in-out",
           !isLoaded && lowQualitySrc ? "filter blur-sm" : "",
-          props.className
+          className
         )}
         loading="lazy"
         {...props}

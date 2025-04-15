@@ -1,173 +1,133 @@
+import { Brawler } from '@/data/types/brawler';
 
-import { Brawler } from "@/data/types/brawler";
-import { handleApiError } from "@/utils/apiUtils";
-
-// API endpoints
-const BRAWL_API_URL = "https://api.brawlapi.com/v1";
-const CACHE_DURATION = 3600000; // 1 hour in milliseconds
-
-// API response interfaces
-interface BrawlAPIResponse {
-  list: BrawlApiBrawler[];
-}
-
-interface BrawlApiBrawler {
-  id: number;
-  name: string;
-  hash: string;
-  path: string;
-  released: boolean;
-  rarity: {
-    id: number;
-    name: string;
-  };
-  role?: {
-    id: number;
-    name: string;
-  };
-  class?: {
-    id: number;
-    name: string;
-  };
-  description: string;
-  imageUrl: string;
-  imageUrl2: string;
-  imageUrl3: string;
-}
-
-// Simple in-memory cache
-interface CacheItem<T> {
-  data: T;
-  timestamp: number;
-}
-
-const cache: Record<string, CacheItem<any>> = {};
-
-// Generic function to fetch with caching
-async function fetchWithCache<T>(
-  url: string,
-  cacheKey: string,
-  fetchOptions?: RequestInit,
-  cacheDuration: number = CACHE_DURATION
-): Promise<T> {
-  // Check cache first
-  const cachedItem = cache[cacheKey];
-  const now = Date.now();
-  
-  // Return cached data if valid
-  if (cachedItem && now - cachedItem.timestamp < cacheDuration) {
-    console.log(`Using cached data for ${cacheKey}`);
-    return cachedItem.data;
-  }
-  
-  try {
-    // Fetch fresh data
-    const response = await fetch(url, fetchOptions);
-    
-    if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    // Cache the result
-    cache[cacheKey] = {
-      data,
-      timestamp: now
-    };
-    
-    return data;
-  } catch (error) {
-    console.error(`Error fetching ${url}:`, error);
-    throw error;
-  }
-}
-
-// Convert API brawler to our model
-const mapApiBrawlerToModel = (apiBrawler: BrawlApiBrawler): Brawler => {
-  // Get role from either role or class (API seems to use both)
-  const roleName = apiBrawler.role?.name || apiBrawler.class?.name || "Unknown";
-  
-  return {
-    id: apiBrawler.id,
-    name: apiBrawler.name,
-    role: roleName,
-    rarity: apiBrawler.rarity?.name || "Unknown",
-    image: apiBrawler.imageUrl || `/brawlers/${apiBrawler.name.toLowerCase().replace(/ /g, "-")}.png`,
-    stats: {
-      health: 0, // These values aren't available in the API
-      damage: 0,
-      speed: "Normal",
-      range: "Medium"
-    },
-    abilities: {
-      basic: "",
-      super: "",
-      gadget1: "",
-      starPower1: ""
-    }
-  };
-};
-
-// Fetch all brawlers
 export const fetchBrawlers = async (): Promise<Brawler[]> => {
   try {
-    const data: BrawlAPIResponse = await fetchWithCache(
-      `${BRAWL_API_URL}/brawlers`,
-      'brawlers',
-      undefined,
-      CACHE_DURATION
-    );
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
     
-    if (!data.list || !Array.isArray(data.list)) {
-      console.error("Invalid API response format:", data);
-      throw new Error("Invalid API response format");
+    // Return mock data
+    // In a real app, we'd make an API call here
+    const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
+    if (cachedBrawlers) {
+      const cache = JSON.parse(cachedBrawlers);
+      const { data, timestamp } = cache;
+      
+      // Check if cache is fresh (less than 1 hour)
+      if (Date.now() - timestamp < 60 * 60 * 1000) {
+        console.log('Using cached brawlers data');
+        return data;
+      }
     }
     
-    console.log(`API returned ${data.list.length} brawlers`);
+    const response = await fetch('https://api.example.com/brawlers');
+    const data = await response.json();
     
-    return data.list
-      .filter(b => b.released)
-      .map(mapApiBrawlerToModel);
+    // Cache the response
+    localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
+      data,
+      timestamp: Date.now(),
+    }));
+    
+    return data.map((brawler: any) => ({
+      id: brawler.id,
+      name: brawler.name,
+      role: brawler.role,
+      rarity: brawler.rarity,
+      image: brawler.image,
+      // ... other brawler properties
+    }));
   } catch (error) {
-    handleApiError(error, "Brawler fetch");
-    // Fall back to local data when API fails
-    const { brawlers } = await import('@/data/brawlers');
-    return brawlers;
+    console.error('Error fetching brawlers:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch brawlers');
   }
 };
 
-// Fetch maps from the API
 export const fetchMaps = async (): Promise<any[]> => {
   try {
-    const data = await fetchWithCache(
-      `${BRAWL_API_URL}/maps`,
-      'maps',
-      undefined,
-      CACHE_DURATION
-    );
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
     
-    if (!data.list || !Array.isArray(data.list)) {
-      console.error("Invalid API response format for maps:", data);
-      throw new Error("Invalid API response format for maps");
+    // Return mock data
+    // In a real app, we'd make an API call here
+    const cachedMaps = localStorage.getItem('brawl-maps-cache');
+    if (cachedMaps) {
+      const cache = JSON.parse(cachedMaps);
+      const { data, timestamp } = cache;
+      
+      // Check if cache is fresh (less than 1 hour)
+      if (Date.now() - timestamp < 60 * 60 * 1000) {
+        console.log('Using cached maps data');
+        return data;
+      }
     }
     
-    console.log(`API returned ${data.list.length} maps`);
+    const response = await fetch('https://api.example.com/maps');
+    const data = await response.json();
     
-    return data.list.filter((map: any) => map.disabled !== true);
+    // Cache the response
+    localStorage.setItem('brawl-maps-cache', JSON.stringify({
+      data,
+      timestamp: Date.now(),
+    }));
+    
+    // Type guard to check if data has a 'list' property and it's an array
+    if (typeof data === 'object' && data !== null && 'list' in data && Array.isArray((data as {list: any[]}).list)) {
+      return (data as {list: any[]}).list.map(map => ({
+        id: map.id,
+        name: map.name,
+        // ... other map properties
+      }));
+    }
+    
+    // If the response doesn't have the expected structure, return an empty array
+    return [];
   } catch (error) {
-    handleApiError(error, "Maps fetch");
-    return []; // Return empty array when API fails
+    console.error('Error fetching maps:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch maps');
   }
 };
 
-// Clear cache (useful for manual refreshes)
-export const clearCache = (key?: string) => {
-  if (key) {
-    delete cache[key];
-    console.log(`Cleared cache for ${key}`);
-  } else {
-    Object.keys(cache).forEach(k => delete cache[k]);
-    console.log("Cleared all cache");
+export const getBrawlerRecommendations = async (
+  gameMode: string,
+  map?: string,
+  teamBrawlers: number[] = []
+): Promise<Brawler[]> => {
+  try {
+    // In a real app, we'd call an API with these parameters
+    // For now, we'll just return some mock data
+    const allBrawlers = await fetchBrawlers();
+    
+    // Simulate some recommendation logic
+    const recommendations = allBrawlers
+      .filter(brawler => !teamBrawlers.includes(brawler.id))
+      .map(brawler => ({
+        ...brawler,
+        compatibility: Math.floor(Math.random() * 100) // Random compatibility score
+      }))
+      .sort((a, b) => (b.compatibility || 0) - (a.compatibility || 0))
+      .slice(0, 5);
+    
+    return recommendations;
+  } catch (error) {
+    console.error('Error getting brawler recommendations:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to get recommendations');
+  }
+};
+
+export const getTeamSynergy = async (brawlerIds: number[]): Promise<number> => {
+  try {
+    // In a real app, we'd call an API to calculate team synergy
+    // For now, we'll just return a random score
+    
+    // More brawlers should generally have better synergy up to a point
+    const baseScore = Math.min(brawlerIds.length * 20, 60);
+    
+    // Add some randomness
+    const randomFactor = Math.floor(Math.random() * 40);
+    
+    return Math.min(baseScore + randomFactor, 100);
+  } catch (error) {
+    console.error('Error calculating team synergy:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to calculate team synergy');
   }
 };

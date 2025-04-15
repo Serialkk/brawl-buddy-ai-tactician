@@ -33,12 +33,8 @@ export const configureQueryClient = (): QueryClient => {
             return false;
           }
           return failureCount < 2; // Retry twice for other errors
-        },
-        onError: (error) => handleApiError(error, "Data fetch"),
-      },
-      mutations: {
-        onError: (error) => handleApiError(error, "Update"),
-      },
+        }
+      }
     },
   });
 };
