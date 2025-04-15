@@ -7,7 +7,9 @@ import { BrawlerSelector } from "./team-composition/BrawlerSelector";
 import { RecommendedTeams } from "./team-composition/RecommendedTeams";
 import { SelectedTeamDisplay } from "./team-composition/SelectedTeamDisplay";
 import { SynergyAnalysis } from "./team-composition/SynergyAnalysis";
+import { SavedTeamsMenu } from "./team-composition/SavedTeamsMenu";
 import { analyzeSynergy } from "@/utils/synergyAnalysis";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function TeamComposition() {
   const [selectedMode, setSelectedMode] = useState("gemGrab");
@@ -62,6 +64,16 @@ export function TeamComposition() {
     return compatibilityData[selectedMode] || [];
   };
 
+  const handleLoadTeam = (brawlerIds: number[], gameMode: string) => {
+    // First update the game mode if different
+    if (gameMode !== selectedMode) {
+      setSelectedMode(gameMode);
+    }
+    
+    // Then set the brawlers
+    setSelectedBrawlers(brawlerIds.slice(0, 3)); // Only take up to 3 brawlers
+  };
+
   const selectedBrawlerData = selectedBrawlers.map(id => 
     brawlers.find(b => b.id === id)!
   );
@@ -83,6 +95,16 @@ export function TeamComposition() {
         selectedMode={selectedMode} 
         onSelectMode={handleModeSelection} 
       />
+      
+      <Card className="brawl-card">
+        <CardContent className="pt-6">
+          <SavedTeamsMenu 
+            selectedMode={selectedMode}
+            selectedBrawlers={selectedBrawlers}
+            onLoadTeam={handleLoadTeam}
+          />
+        </CardContent>
+      </Card>
 
       <BrawlerSelector
         brawlers={brawlers}
