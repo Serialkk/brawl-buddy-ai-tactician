@@ -7,6 +7,7 @@ import { StrategyGuide } from "@/components/StrategyGuide";
 import { OpponentPrediction } from "@/components/OpponentPrediction";
 import { Dashboard } from "@/components/Dashboard";
 import { Maps } from "@/components/Maps";
+import { RealTimeStats } from "@/components/RealTimeStats";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("team");
@@ -22,6 +23,7 @@ const Index = () => {
         {activeTab === "opponent" && <OpponentPrediction />}
         {activeTab === "dashboard" && <Dashboard />}
         {activeTab === "maps" && <Maps />}
+        {activeTab === "stats" && <RealTimeStats />}
       </main>
     </div>
   );
