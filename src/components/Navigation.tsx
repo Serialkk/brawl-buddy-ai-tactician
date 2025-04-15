@@ -29,8 +29,8 @@ const NavItem = ({ icon: Icon, label, active, onClick }: NavItemProps) => {
       className={cn(
         "flex items-center gap-3 p-3 w-full rounded-lg transition-all",
         active 
-          ? "bg-brawl-purple text-white font-bold" 
-          : "hover:bg-secondary text-muted-foreground hover:text-white"
+          ? "bg-brawl-purple text-foreground font-bold" 
+          : "hover:bg-secondary text-foreground/70 hover:text-foreground"
       )}
     >
       <Icon className="h-5 w-5" />
@@ -59,7 +59,7 @@ export function Navigation({ activeTab, setActiveTab }: {
     <>
       {/* Mobile Navigation */}
       <div className="md:hidden flex justify-between items-center w-full p-4 bg-card border-b">
-        <h1 className="text-xl text-white">
+        <h1 className="text-xl text-foreground">
           <span className="text-brawl-blue">Brawl</span>
           <span className="text-brawl-purple">Buddy</span>
         </h1>
@@ -71,9 +71,9 @@ export function Navigation({ activeTab, setActiveTab }: {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
+              <X className="h-6 w-6 text-foreground" />
             ) : (
-              <Menu className="h-6 w-6" />
+              <Menu className="h-6 w-6 text-foreground" />
             )}
           </Button>
         </div>
@@ -102,10 +102,10 @@ export function Navigation({ activeTab, setActiveTab }: {
       <div className="hidden md:flex flex-col gap-2 w-64 p-4 border-r border-border">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brawl-blue to-brawl-purple flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brawl-blue to-brawl-purple flex items-center justify-center text-foreground font-bold text-lg">
               BB
             </div>
-            <h2 className="font-bold text-xl">
+            <h2 className="font-bold text-xl text-foreground">
               <span className="text-brawl-blue">Brawl</span>
               <span className="text-brawl-purple">Buddy</span>
             </h2>
@@ -128,4 +128,3 @@ export function Navigation({ activeTab, setActiveTab }: {
     </>
   );
 }
-
