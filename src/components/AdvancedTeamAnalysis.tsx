@@ -1,3 +1,4 @@
+
 import React, { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -733,4 +734,57 @@ export function AdvancedTeamAnalysis({
                   
                   {gameMode === "gemGrab" && (
                     <div className="space-y-2">
-                      <
+                      <p className="text-sm">• Position your gem carrier in the middle with protection from both sides</p>
+                      <p className="text-sm">• Focus on holding the center area rather than pursuing kills</p>
+                      <p className="text-sm">• When countdown begins, play defensively and avoid unnecessary risks</p>
+                    </div>
+                  )}
+                  
+                  {gameMode === "brawlBall" && (
+                    <div className="space-y-2">
+                      <p className="text-sm">• Clear defenders before attempting to score</p>
+                      <p className="text-sm">• Use walls strategically for both offense and defense</p>
+                      <p className="text-sm">• Consider cycling supers to maintain control of key areas</p>
+                    </div>
+                  )}
+                  
+                  {gameMode === "bounty" && (
+                    <div className="space-y-2">
+                      <p className="text-sm">• Focus on protecting teammates with high star counts</p>
+                      <p className="text-sm">• Don't chase kills when your team is ahead</p>
+                      <p className="text-sm">• Use bushes and walls for tactical positioning</p>
+                    </div>
+                  )}
+                  
+                  {gameMode === "heist" && (
+                    <div className="space-y-2">
+                      <p className="text-sm">• Split your team between offense and defense as needed</p>
+                      <p className="text-sm">• Time your pushes to coincide with teammate respawns</p>
+                      <p className="text-sm">• Focus-fire on the safe when you have an opening</p>
+                    </div>
+                  )}
+                  
+                  {gameMode === "siege" && (
+                    <div className="space-y-2">
+                      <p className="text-sm">• Prioritize bolt collection in early game</p>
+                      <p className="text-sm">• Defend against enemy robots as a team</p>
+                      <p className="text-sm">• Support your robot with coordinated pushes</p>
+                    </div>
+                  )}
+                  
+                  {gameMode === "hotZone" && (
+                    <div className="space-y-2">
+                      <p className="text-sm">• Control high-traffic areas between zones</p>
+                      <p className="text-sm">• Rotate between zones as needed rather than overcommitting</p>
+                      <p className="text-sm">• Use area denial abilities to maintain control of captured zones</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+}
