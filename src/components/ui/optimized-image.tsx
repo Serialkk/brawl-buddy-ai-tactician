@@ -1,5 +1,5 @@
 
-import { useState, useEffect, ImgHTMLAttributes } from 'react';
+import { useState, useEffect, ImgHTMLAttributes, SyntheticEvent } from 'react';
 import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
@@ -44,12 +44,25 @@ export function OptimizedImage({
         setHasError(false);
       };
       
-      img.onerror = () => {
+      img.onerror = (event) => {
         console.warn(`Failed to load image: ${src}`);
         setImgSrc(fallback);
         setHasError(true);
         if (onError && typeof onError === 'function') {
-          onError(new Error(`Failed to load image: ${src}`));
+          // Create a synthetic event-like object instead of passing the Error directly
+          const syntheticEvent = {
+            currentTarget: img,
+            target: img,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+            nativeEvent: event,
+            bubbles: true,
+            cancelable: true,
+            defaultPrevented: false,
+            type: 'error'
+          } as unknown as SyntheticEvent<HTMLImageElement, Event>;
+          
+          onError(syntheticEvent);
         }
       };
 
@@ -71,7 +84,23 @@ export function OptimizedImage({
       setImgSrc(fallback);
       setHasError(true);
       if (onError && typeof onError === 'function') {
-        onError(new Error(`Failed to load image: ${src}`));
+        // Create a synthetic event-like object for better typing
+        const imgElement = new Image();
+        imgElement.src = src as string;
+        
+        const syntheticEvent = {
+          currentTarget: imgElement,
+          target: imgElement,
+          preventDefault: () => {},
+          stopPropagation: () => {},
+          nativeEvent: new Event('error'),
+          bubbles: true,
+          cancelable: true,
+          defaultPrevented: false,
+          type: 'error'
+        } as unknown as SyntheticEvent<HTMLImageElement, Event>;
+        
+        onError(syntheticEvent);
       }
     }
   }, [src, fallback, onError]);
