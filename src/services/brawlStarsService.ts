@@ -1,5 +1,5 @@
 
-import { Brawler } from "@/data/brawlers";
+import { Brawler } from "@/data/types/brawler";
 
 // API endpoints
 const BRAWL_API_URL = "https://api.brawlapi.com/v1";
