@@ -5,7 +5,7 @@ import { StrengthsCard } from "./StrengthsCard";
 import { WeaknessesCard } from "./WeaknessesCard";
 import { PerformanceMetricsCard } from "./PerformanceMetricsCard";
 import { generateAnalysisPDF } from "./utils/pdfUtils";
-import { FilePdf, Download } from "lucide-react";
+import { FileText, Download } from "lucide-react"; // Replaced FilePdf with FileText
 import { toast } from "sonner";
 
 interface ReplayData {
@@ -63,7 +63,7 @@ export function ResultsView({ replayData, onReset }: ResultsViewProps) {
           variant="outline" 
           className="border-brawl-blue text-brawl-blue hover:bg-brawl-blue/10"
         >
-          <FilePdf className="mr-2 h-5 w-5" />
+          <FileText className="mr-2 h-5 w-5" /> {/* Replaced FilePdf with FileText */}
           Download PDF
         </Button>
       </div>
