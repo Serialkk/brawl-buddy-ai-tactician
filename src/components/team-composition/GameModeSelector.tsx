@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Gem, Target, Shield, Star, Gauge, Circle, Castle } from "lucide-react";
+import { Trophy, Gem, Target, Shield, Star, Circle, Castle, Flag, Clock, Sword, Crown } from "lucide-react";
 
 export const gameModes = [
   { id: "gemGrab", name: "Gem Grab", icon: Gem },
@@ -10,7 +10,11 @@ export const gameModes = [
   { id: "heist", name: "Heist", icon: Shield },
   { id: "bounty", name: "Bounty", icon: Star },
   { id: "siege", name: "Siege", icon: Castle },
-  { id: "hotZone", name: "Hot Zone", icon: Circle }
+  { id: "hotZone", name: "Hot Zone", icon: Circle },
+  { id: "knockout", name: "Knockout", icon: Flag },
+  { id: "showdown", name: "Showdown", icon: Crown },
+  { id: "duels", name: "Duels", icon: Sword },
+  { id: "wipeout", name: "Wipeout", icon: Clock }
 ];
 
 interface GameModeSelectorProps {
@@ -28,7 +32,7 @@ export const GameModeSelector = ({ selectedMode, onSelectMode }: GameModeSelecto
         <CardDescription>Wähle den Spielmodus aus, in dem du spielen möchtest</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
           {gameModes.map((mode) => {
             const Icon = mode.icon;
             return (

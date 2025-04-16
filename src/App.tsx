@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import { GameDataProvider } from "@/contexts/GameDataContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { configureQueryClient } from "@/utils/apiUtils";
 import { DefaultLoadingComponent } from "@/utils/lazyLoad";
 
@@ -25,22 +26,24 @@ const App = () => (
     <AuthProvider>
       <LoadingProvider>
         <GameDataProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<DefaultLoadingComponent />}>
-                <Routes>
-                  <Route path="/auth" element={<Auth />} />
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<Index />} />
-                    {/* Add additional protected routes here */}
-                  </Route>
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
+          <LanguageProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Suspense fallback={<DefaultLoadingComponent />}>
+                  <Routes>
+                    <Route path="/auth" element={<Auth />} />
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/" element={<Index />} />
+                      {/* Add additional protected routes here */}
+                    </Route>
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </TooltipProvider>
+          </LanguageProvider>
         </GameDataProvider>
       </LoadingProvider>
     </AuthProvider>
