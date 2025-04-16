@@ -27,6 +27,32 @@ const enhanceBrawlersWithLocalImages = (brawlers: Brawler[]): Brawler[] => {
   }));
 };
 
+// Make sure we have access to all available brawlers
+const getAllAvailableBrawlers = (): Brawler[] => {
+  // Import all brawler categories from the modular structure
+  const { 
+    startingAndTrophyRoadBrawlers,
+    rareBrawlers, 
+    superRareBrawlers, 
+    epicBrawlers, 
+    mythicBrawlers, 
+    legendaryBrawlers 
+  } = require('@/data/brawlers');
+  
+  // Combine all arrays to ensure we have all brawlers
+  const allBrawlers = [
+    ...startingAndTrophyRoadBrawlers,
+    ...rareBrawlers,
+    ...superRareBrawlers,
+    ...epicBrawlers,
+    ...mythicBrawlers,
+    ...legendaryBrawlers
+  ];
+  
+  console.log(`Total brawlers available locally: ${allBrawlers.length}`);
+  return enhanceBrawlersWithLocalImages(allBrawlers);
+};
+
 export function GameDataProvider({ children }: { children: ReactNode }) {
   const { 
     data: brawlers = [], 
@@ -38,16 +64,16 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
       try {
         console.log("Fetching brawlers data...");
         
-        // First ensure we have enhanced local brawlers with proper image URLs
-        const enhancedLocalBrawlers = enhanceBrawlersWithLocalImages(localBrawlersFallback);
+        // Always start with the complete set of local brawlers to ensure we have all 90
+        const completeLocalBrawlers = getAllAvailableBrawlers();
         
         // Try to fetch from API
         const loadedBrawlers = await fetchBrawlers();
         
-        if (!loadedBrawlers || loadedBrawlers.length === 0) {
-          console.log("No brawlers returned from API, using local data");
-          toast.error("Keine Brawlers gefunden, verwende lokale Daten");
-          return enhancedLocalBrawlers;
+        if (!loadedBrawlers || loadedBrawlers.length < 80) {
+          console.log(`API returned only ${loadedBrawlers?.length || 0} brawlers, using complete local data`);
+          toast.info("Lade lokale Brawler-Daten mit allen 90 Brawlern");
+          return completeLocalBrawlers;
         }
         
         // Log how many brawlers were actually loaded
@@ -57,10 +83,10 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
         return enhanceBrawlersWithLocalImages(loadedBrawlers);
       } catch (error) {
         console.error('Error fetching brawlers in context:', error);
-        toast.error("Fehler beim Laden der Brawler, verwende lokale Daten");
+        toast.error("Fehler beim Laden der Brawler, verwende alle 90 lokalen Brawler");
         
-        // Return enhanced local brawlers as fallback
-        return enhanceBrawlersWithLocalImages(localBrawlersFallback);
+        // Return complete set of local brawlers as fallback
+        return getAllAvailableBrawlers();
       }
     },
     staleTime: 1 * 60 * 1000, // Reduce cache time to 1 min for testing
