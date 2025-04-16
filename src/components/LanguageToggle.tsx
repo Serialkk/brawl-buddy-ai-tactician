@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Language } from 'lucide-react';
+import { Languages } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export const LanguageToggle = () => {
@@ -12,7 +12,7 @@ export const LanguageToggle = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="flex items-center gap-2">
-          <Language className="h-4 w-4" />
+          <Languages className="h-4 w-4" />
           <span className="uppercase">{language}</span>
         </Button>
       </DropdownMenuTrigger>

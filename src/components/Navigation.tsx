@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Sidebar } from '@/components/ui/sidebar';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Trophy, Users, Map, ChevronRight, BarChart, PlayCircle, Brain, Layout, Info } from 'lucide-react';
 import { ProfileMenu } from './ProfileMenu';
 import { LanguageToggle } from './LanguageToggle';
@@ -12,7 +12,7 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
-  const { isMobile } = useMobile();
+  const isMobile = useIsMobile();
   
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <Layout className="w-5 h-5" /> },
