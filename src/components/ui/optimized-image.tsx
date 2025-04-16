@@ -20,6 +20,12 @@ export function OptimizedImage({
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
+  // Hilfsfunktion um zu bestimmen, ob ein Bild lokal oder remote ist
+  const isLocalImage = (path?: string) => {
+    if (!path) return false;
+    return path.startsWith('/') && !path.startsWith('//');
+  };
+
   useEffect(() => {
     if (!src) {
       setImgSrc(fallback);
@@ -27,47 +33,57 @@ export function OptimizedImage({
       return;
     }
 
-    // Reset states when src changes
+    // Zurücksetzen der Status wenn src sich ändert
     setIsLoaded(false);
     setHasError(false);
+    
+    // Wenn es sich um ein lokales Bild handelt, verwenden wir es direkt
+    if (isLocalImage(src as string)) {
+      setImgSrc(src as string);
+      return;
+    }
+    
+    // Ansonsten das Bild testen
     setImgSrc(src as string);
     
-    // Create an image object to test loading
-    const img = new Image();
-    img.src = src as string;
-    
-    img.onload = () => {
-      setIsLoaded(true);
-      setHasError(false);
-    };
-    
-    img.onerror = (event) => {
-      console.warn(`Failed to load image: ${src}`);
-      setImgSrc(fallback);
-      setHasError(true);
+    // Für Remote-Bilder eine Vorab-Ladung durchführen
+    if (!isLocalImage(src as string)) {
+      const img = new Image();
+      img.src = src as string;
       
-      if (onError && typeof onError === 'function') {
-        // Create a synthetic event for TypeScript compatibility
-        const syntheticEvent = {
-          currentTarget: img,
-          target: img,
-          preventDefault: () => {},
-          stopPropagation: () => {},
-          nativeEvent: event,
-          bubbles: true,
-          cancelable: true,
-          defaultPrevented: false,
-          type: 'error'
-        } as unknown as SyntheticEvent<HTMLImageElement, Event>;
+      img.onload = () => {
+        setIsLoaded(true);
+        setHasError(false);
+      };
+      
+      img.onerror = (event) => {
+        console.warn(`Failed to load image: ${src}`);
+        setImgSrc(fallback);
+        setHasError(true);
         
-        onError(syntheticEvent);
-      }
-    };
+        if (onError && typeof onError === 'function') {
+          // Erstelle ein synthetisches Ereignis für TypeScript-Kompatibilität
+          const syntheticEvent = {
+            currentTarget: img,
+            target: img,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+            nativeEvent: event,
+            bubbles: true,
+            cancelable: true,
+            defaultPrevented: false,
+            type: 'error'
+          } as unknown as SyntheticEvent<HTMLImageElement, Event>;
+          
+          onError(syntheticEvent);
+        }
+      };
 
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
+      return () => {
+        img.onload = null;
+        img.onerror = null;
+      };
+    }
   }, [src, fallback, onError]);
 
   return (

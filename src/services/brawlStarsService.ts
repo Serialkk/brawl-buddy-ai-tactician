@@ -1,11 +1,15 @@
+
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlers } from '@/data/brawlers';
 
-// Stelle sicher, dass alle Brawler ein gültiges Bild haben
-const addImageUrlsToBrawlers = (brawlers: Brawler[]): Brawler[] => {
+// Stelle sicher, dass alle Brawler ein gültiges lokales Bild haben
+const addLocalImageUrls = (brawlers: Brawler[]): Brawler[] => {
   return brawlers.map(brawler => ({
     ...brawler,
-    image: brawler.image || `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+    // Verwende bevorzugt lokale Bilder
+    image: brawler.image?.startsWith('/') 
+      ? brawler.image 
+      : `/brawlers/${brawler.name.toLowerCase().replace(/\s+/g, '-')}.png`
   }));
 };
 
@@ -25,14 +29,14 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
       // Check if cache is fresh (less than 1 hour)
       if (Date.now() - timestamp < 60 * 60 * 1000) {
         console.log('Using cached brawlers data');
-        // Stelle sicher, dass die Bilder-URLs korrekt sind
-        return addImageUrlsToBrawlers(data);
+        // Stelle sicher, dass die Bilder-URLs lokal sind
+        return addLocalImageUrls(data);
       }
     }
     
-    // Da wir derzeit eine API verwenden, die nicht funktioniert, gehen wir direkt zu den lokalen Daten über
-    console.log('API currently unavailable, using local brawler data');
-    const enhancedLocalBrawlers = addImageUrlsToBrawlers(localBrawlers);
+    // Da die externe API nicht funktioniert, verwenden wir lokale Daten
+    console.log('Using local brawler data with local image paths');
+    const enhancedLocalBrawlers = addLocalImageUrls(localBrawlers);
     
     // Cache the enhanced local data
     localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
@@ -43,11 +47,12 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
     return enhancedLocalBrawlers;
   } catch (error) {
     console.error('Error in fetchBrawlers:', error);
-    // Final fallback to local data with enhanced image URLs
-    return addImageUrlsToBrawlers(localBrawlers);
+    // Final fallback to local data with local image URLs
+    return addLocalImageUrls(localBrawlers);
   }
 };
 
+// Restliche Funktionen bleiben unverändert
 export const fetchMaps = async (): Promise<any[]> => {
   try {
     // Simulate API call delay

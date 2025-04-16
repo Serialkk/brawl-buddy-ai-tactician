@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchBrawlers, fetchMaps } from '@/services/brawlStarsService';
@@ -17,14 +18,14 @@ interface GameDataContextType {
 
 const GameDataContext = createContext<GameDataContextType | undefined>(undefined);
 
-// Helper to enhance brawlers with consistent image URLs
-const enhanceBrawlersWithImages = (brawlers: Brawler[]): Brawler[] => {
+// Helper to enhance brawlers with consistent local image URLs
+const enhanceBrawlersWithLocalImages = (brawlers: Brawler[]): Brawler[] => {
   return brawlers.map(brawler => ({
     ...brawler,
-    // Stelle sicher, dass jeder Brawler eine CDN-URL hat
-    image: brawler.image && brawler.image.startsWith('http') 
+    // Verwende lokale Bild-URLs für bessere Zuverlässigkeit
+    image: brawler.image?.startsWith('/') 
       ? brawler.image 
-      : `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+      : `/brawlers/${brawler.name.toLowerCase().replace(/\s+/g, '-')}.png`
   }));
 };
 
@@ -40,7 +41,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
         console.log("Fetching brawlers data...");
         
         // Always enhance local brawlers with image URLs as a backup
-        const enhancedLocalBrawlers = enhanceBrawlersWithImages(localBrawlersFallback);
+        const enhancedLocalBrawlers = enhanceBrawlersWithLocalImages(localBrawlersFallback);
 
         // Try to fetch from API
         const loadedBrawlers = await fetchBrawlers();
@@ -52,14 +53,14 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
         }
         
         console.log(`Fetched ${loadedBrawlers.length} brawlers successfully`);
-        // Make sure all fetched brawlers have proper image URLs
-        return enhanceBrawlersWithImages(loadedBrawlers);
+        // Make sure all fetched brawlers have proper local image URLs
+        return enhanceBrawlersWithLocalImages(loadedBrawlers);
       } catch (error) {
         console.error('Error fetching brawlers in context:', error);
         toast.error("Fehler beim Laden der Brawler, verwende lokale Daten");
         
         // Return enhanced local brawlers as fallback
-        return enhanceBrawlersWithImages(localBrawlersFallback);
+        return enhanceBrawlersWithLocalImages(localBrawlersFallback);
       }
     },
     staleTime: 5 * 60 * 1000, // 5 min cache

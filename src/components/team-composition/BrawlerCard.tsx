@@ -46,17 +46,17 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Verwende direkt die CDN-URL für Brawler-Bilder
+  // Verwende immer lokale Bilder, da die CDN-Bilder nicht funktionieren
   const getBrawlerImageUrl = () => {
     if (imageError) return '/placeholder.svg';
     
-    // Wenn ein Bildpfad mit http beginnt, verwende ihn direkt
-    if (image && image.startsWith('http')) {
+    // Prüfe, ob es sich um einen lokalen Pfad handelt
+    if (image && image.startsWith('/')) {
       return image;
     }
     
-    // Ansonsten versuche es mit der Brawl Stars CDN-URL
-    return `https://cdn.brawlstats.com/brawlers/${id}.png`;
+    // Fallback auf lokale Bilder
+    return `/brawlers/${name.toLowerCase().replace(/\s+/g, '-')}.png`;
   };
   
   return (
