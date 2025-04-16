@@ -1,15 +1,33 @@
-
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlers } from '@/data/brawlers';
+import { 
+  startingAndTrophyRoadBrawlers, 
+  rareBrawlers, 
+  superRareBrawlers, 
+  epicBrawlers,
+  mythicBrawlers,
+  legendaryBrawlers
+} from '@/data/brawlers/index';
 
-// Stelle sicher, dass alle Brawler ein gültiges lokales Bild haben
+// Get all brawlers from local data sources to ensure we have a complete set
+const getAllLocalBrawlers = (): Brawler[] => {
+  // Combine all brawler arrays to make sure we have the full collection
+  return [
+    ...startingAndTrophyRoadBrawlers,
+    ...rareBrawlers,
+    ...superRareBrawlers,
+    ...epicBrawlers,
+    ...mythicBrawlers,
+    ...legendaryBrawlers
+  ];
+};
+
+// Ensure all brawlers have valid local image paths
 const addLocalImageUrls = (brawlers: Brawler[]): Brawler[] => {
   return brawlers.map(brawler => ({
     ...brawler,
-    // Verwende bevorzugt lokale Bilder
-    image: brawler.image?.startsWith('/') 
-      ? brawler.image 
-      : `/brawlers/${brawler.name.toLowerCase().replace(/\s+/g, '-')}.png`
+    // Always use local images with consistent naming format
+    image: `/brawlers/${brawler.name.toLowerCase().replace(/\s+/g, '-')}.png`
   }));
 };
 
@@ -17,42 +35,49 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
   try {
     console.log("Attempting to fetch brawlers from API or cache...");
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Check if we have cached data first for faster loading
+    // First check if we have cached data
     const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
     if (cachedBrawlers) {
-      const cache = JSON.parse(cachedBrawlers);
-      const { data, timestamp } = cache;
-      
-      // Check if cache is fresh (less than 1 hour)
-      if (Date.now() - timestamp < 60 * 60 * 1000) {
-        console.log('Using cached brawlers data');
-        // Stelle sicher, dass die Bilder-URLs lokal sind
-        return addLocalImageUrls(data);
+      try {
+        const cache = JSON.parse(cachedBrawlers);
+        const { data, timestamp } = cache;
+        
+        // Check if cache is still fresh (less than 30 minutes)
+        if (Date.now() - timestamp < 30 * 60 * 1000) {
+          console.log('Using cached brawlers data');
+          return addLocalImageUrls(data);
+        }
+      } catch (cacheError) {
+        console.error('Error parsing cache:', cacheError);
+        // Continue to fetch if cache parsing fails
       }
     }
     
-    // Da die externe API nicht funktioniert, verwenden wir lokale Daten
-    console.log('Using local brawler data with local image paths');
-    const enhancedLocalBrawlers = addLocalImageUrls(localBrawlers);
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Cache the enhanced local data
+    // Always use the full set of local brawlers to ensure we have all 90
+    const fullLocalBrawlers = getAllLocalBrawlers();
+    console.log(`Using complete local data set with ${fullLocalBrawlers.length} brawlers`);
+    
+    // Add proper image URLs
+    const enhancedBrawlers = addLocalImageUrls(fullLocalBrawlers);
+    
+    // Cache the enhanced data
     localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
-      data: enhancedLocalBrawlers,
+      data: enhancedBrawlers,
       timestamp: Date.now(),
     }));
     
-    return enhancedLocalBrawlers;
+    return enhancedBrawlers;
   } catch (error) {
     console.error('Error in fetchBrawlers:', error);
     // Final fallback to local data with local image URLs
-    return addLocalImageUrls(localBrawlers);
+    return addLocalImageUrls(getAllLocalBrawlers());
   }
 };
 
-// Restliche Funktionen bleiben unverändert
+// Rest of the service remains the same
 export const fetchMaps = async (): Promise<any[]> => {
   try {
     // Simulate API call delay

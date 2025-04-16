@@ -22,10 +22,8 @@ const GameDataContext = createContext<GameDataContextType | undefined>(undefined
 const enhanceBrawlersWithLocalImages = (brawlers: Brawler[]): Brawler[] => {
   return brawlers.map(brawler => ({
     ...brawler,
-    // Verwende lokale Bild-URLs für bessere Zuverlässigkeit
-    image: brawler.image?.startsWith('/') 
-      ? brawler.image 
-      : `/brawlers/${brawler.name.toLowerCase().replace(/\s+/g, '-')}.png`
+    // Always use local image paths for reliability
+    image: `/brawlers/${brawler.name.toLowerCase().replace(/\s+/g, '-')}.png`
   }));
 };
 
@@ -40,9 +38,9 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
       try {
         console.log("Fetching brawlers data...");
         
-        // Always enhance local brawlers with image URLs as a backup
+        // First ensure we have enhanced local brawlers with proper image URLs
         const enhancedLocalBrawlers = enhanceBrawlersWithLocalImages(localBrawlersFallback);
-
+        
         // Try to fetch from API
         const loadedBrawlers = await fetchBrawlers();
         
@@ -52,7 +50,9 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
           return enhancedLocalBrawlers;
         }
         
+        // Log how many brawlers were actually loaded
         console.log(`Fetched ${loadedBrawlers.length} brawlers successfully`);
+        
         // Make sure all fetched brawlers have proper local image URLs
         return enhanceBrawlersWithLocalImages(loadedBrawlers);
       } catch (error) {
@@ -63,9 +63,9 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
         return enhanceBrawlersWithLocalImages(localBrawlersFallback);
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 min cache
+    staleTime: 1 * 60 * 1000, // Reduce cache time to 1 min for testing
     refetchOnWindowFocus: false,
-    retry: 2,
+    retry: 1, // Reduce retries to speed up fallback to local data
     meta: {
       onError: (error: Error) => handleApiError(error, 'Loading brawlers')
     }

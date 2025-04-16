@@ -46,11 +46,11 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Verwende immer lokale Bilder, da die CDN-Bilder nicht funktionieren
+  // Always use a consistent image URL format
   const getBrawlerImageUrl = () => {
     if (imageError) return '/placeholder.svg';
     
-    // Prüfe, ob es sich um einen lokalen Pfad handelt
+    // If image is already a valid path, use it
     if (image && image.startsWith('/')) {
       return image;
     }
