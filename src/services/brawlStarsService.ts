@@ -1,11 +1,11 @@
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlers } from '@/data/brawlers';
 
-// Helper to add consistent image URLs to brawlers
+// Stelle sicher, dass alle Brawler ein gültiges Bild haben
 const addImageUrlsToBrawlers = (brawlers: Brawler[]): Brawler[] => {
   return brawlers.map(brawler => ({
     ...brawler,
-    image: `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+    image: brawler.image || `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
   }));
 };
 
@@ -14,7 +14,7 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
     console.log("Attempting to fetch brawlers from API or cache...");
     
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // Check if we have cached data first for faster loading
     const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
@@ -25,48 +25,22 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
       // Check if cache is fresh (less than 1 hour)
       if (Date.now() - timestamp < 60 * 60 * 1000) {
         console.log('Using cached brawlers data');
-        return data;
+        // Stelle sicher, dass die Bilder-URLs korrekt sind
+        return addImageUrlsToBrawlers(data);
       }
     }
     
-    // We'll try the API call if cache is stale or doesn't exist
-    try {
-      const response = await fetch('https://api.example.com/brawlers', {
-        signal: AbortSignal.timeout(3000)  // Timeout after 3 seconds
-      });
-      
-      if (!response.ok) {
-        throw new Error(`API responded with status ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log(`API returned ${data.length} brawlers`);
-      
-      // Add image URLs if they don't exist
-      const processedBrawlers = addImageUrlsToBrawlers(data);
-      
-      // Cache the processed response
-      localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
-        data: processedBrawlers,
-        timestamp: Date.now(),
-      }));
-      
-      return processedBrawlers;
-    } catch (apiError) {
-      console.warn('API fetch failed, using local data', apiError);
-      
-      // Use local brawlers with added image URLs
-      console.log(`Using ${localBrawlers.length} local brawlers data`);
-      const enhancedLocalBrawlers = addImageUrlsToBrawlers(localBrawlers);
-      
-      // Cache the enhanced local data too
-      localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
-        data: enhancedLocalBrawlers,
-        timestamp: Date.now(),
-      }));
-      
-      return enhancedLocalBrawlers;
-    }
+    // Da wir derzeit eine API verwenden, die nicht funktioniert, gehen wir direkt zu den lokalen Daten über
+    console.log('API currently unavailable, using local brawler data');
+    const enhancedLocalBrawlers = addImageUrlsToBrawlers(localBrawlers);
+    
+    // Cache the enhanced local data
+    localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
+      data: enhancedLocalBrawlers,
+      timestamp: Date.now(),
+    }));
+    
+    return enhancedLocalBrawlers;
   } catch (error) {
     console.error('Error in fetchBrawlers:', error);
     // Final fallback to local data with enhanced image URLs
@@ -131,7 +105,6 @@ export const fetchMaps = async (): Promise<any[]> => {
   }
 };
 
-// Rest of the file stays the same
 export const getBrawlerRecommendations = async (
   gameMode: string,
   map?: string,

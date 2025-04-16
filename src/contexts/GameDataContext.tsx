@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchBrawlers, fetchMaps } from '@/services/brawlStarsService';
@@ -22,7 +21,10 @@ const GameDataContext = createContext<GameDataContextType | undefined>(undefined
 const enhanceBrawlersWithImages = (brawlers: Brawler[]): Brawler[] => {
   return brawlers.map(brawler => ({
     ...brawler,
-    image: brawler.image || `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
+    // Stelle sicher, dass jeder Brawler eine CDN-URL hat
+    image: brawler.image && brawler.image.startsWith('http') 
+      ? brawler.image 
+      : `https://cdn.brawlstats.com/brawlers/${brawler.id}.png`
   }));
 };
 

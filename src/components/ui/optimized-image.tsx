@@ -16,7 +16,7 @@ export function OptimizedImage({
   onError,
   ...props
 }: OptimizedImageProps) {
-  const [imgSrc, setImgSrc] = useState<string>(lowQualitySrc || fallback);
+  const [imgSrc, setImgSrc] = useState<string>(lowQualitySrc || src || fallback);
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -30,57 +30,9 @@ export function OptimizedImage({
     // Reset states when src changes
     setIsLoaded(false);
     setHasError(false);
-
-    // Check if the src is a data URL or absolute URL
-    const isDataUrl = typeof src === 'string' && src.startsWith('data:');
-    const isAbsoluteUrl = typeof src === 'string' && (
-      src.startsWith('http') || src.startsWith('https') || src.startsWith('blob:')
-    );
-    
-    // If it's already a data URL or absolute URL, use it directly
-    if (isDataUrl || isAbsoluteUrl) {
-      console.log(`Loading image from URL: ${src}`);
-      const img = new Image();
-      img.src = src as string;
-      
-      img.onload = () => {
-        setImgSrc(src as string);
-        setIsLoaded(true);
-        setHasError(false);
-      };
-      
-      img.onerror = (event) => {
-        console.warn(`Failed to load image: ${src}`);
-        setImgSrc(fallback);
-        setHasError(true);
-        if (onError && typeof onError === 'function') {
-          // Create a synthetic event-like object instead of passing the Error directly
-          const syntheticEvent = {
-            currentTarget: img,
-            target: img,
-            preventDefault: () => {},
-            stopPropagation: () => {},
-            nativeEvent: event,
-            bubbles: true,
-            cancelable: true,
-            defaultPrevented: false,
-            type: 'error'
-          } as unknown as SyntheticEvent<HTMLImageElement, Event>;
-          
-          onError(syntheticEvent);
-        }
-      };
-
-      return () => {
-        img.onload = null;
-        img.onerror = null;
-      };
-    }
-
-    // For relative URLs, use them directly as they should be in the public folder
     setImgSrc(src as string);
     
-    // We still need to handle errors for relative URLs
+    // Create an image object to test loading
     const img = new Image();
     img.src = src as string;
     
@@ -89,19 +41,19 @@ export function OptimizedImage({
       setHasError(false);
     };
     
-    img.onerror = () => {
-      console.warn(`Failed to load relative image: ${src}`);
+    img.onerror = (event) => {
+      console.warn(`Failed to load image: ${src}`);
       setImgSrc(fallback);
       setHasError(true);
       
       if (onError && typeof onError === 'function') {
-        // Create a synthetic event-like object for better typing
+        // Create a synthetic event for TypeScript compatibility
         const syntheticEvent = {
           currentTarget: img,
           target: img,
           preventDefault: () => {},
           stopPropagation: () => {},
-          nativeEvent: new Event('error'),
+          nativeEvent: event,
           bubbles: true,
           cancelable: true,
           defaultPrevented: false,
@@ -111,7 +63,7 @@ export function OptimizedImage({
         onError(syntheticEvent);
       }
     };
-    
+
     return () => {
       img.onload = null;
       img.onerror = null;

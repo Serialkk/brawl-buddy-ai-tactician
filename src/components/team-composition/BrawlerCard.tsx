@@ -46,31 +46,16 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Generate better placeholder images with unique parameters based on brawler name
-  const nameForPlaceholder = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const placeholderUrls = [
-    `https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
-    `https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`,
-    `https://images.unsplash.com/photo-1501286353178-1ec871214838?w=200&h=200&fit=crop&seed=${nameForPlaceholder}`
-  ];
-  
-  // Use hash of brawler name to select a consistent image for each brawler
-  const placeholderIndex = Math.abs(nameForPlaceholder.split('').reduce((acc, char) => {
-    return acc + char.charCodeAt(0);
-  }, 0) % placeholderUrls.length);
-  
-  const placeholderImage = placeholderUrls[placeholderIndex];
-  
-  // Try different image sources in priority order
-  const getImageUrl = () => {
-    if (imageError) return placeholderImage;
+  // Verwende direkt die CDN-URL für Brawler-Bilder
+  const getBrawlerImageUrl = () => {
+    if (imageError) return '/placeholder.svg';
     
-    // If provided image is absolute URL, use it directly
-    if (image && (image.startsWith('http') || image.startsWith('data:'))) {
+    // Wenn ein Bildpfad mit http beginnt, verwende ihn direkt
+    if (image && image.startsWith('http')) {
       return image;
     }
     
-    // Try brawl stars CDN format with different size options
+    // Ansonsten versuche es mit der Brawl Stars CDN-URL
     return `https://cdn.brawlstats.com/brawlers/${id}.png`;
   };
   
@@ -93,8 +78,8 @@ export const BrawlerCard = ({
         
         <div className="absolute inset-0 flex items-center justify-center">
           <OptimizedImage 
-            src={getImageUrl()}
-            fallback={placeholderImage}
+            src={getBrawlerImageUrl()}
+            fallback="/placeholder.svg"
             alt={name}
             className="object-contain h-full w-full p-2"
             onError={() => setImageError(true)}
