@@ -23,7 +23,7 @@ export function ReplayAnalysis() {
     
     // Check file type and size
     const validTypes = ['video/mp4', 'video/webm', 'application/json']; // Allow video and JSON replay files
-    const maxSize = 20 * 1024 * 1024; // 20MB max
+    const maxSize = 1024 * 1024 * 1024; // 1GB max (increased from 20MB)
     
     if (!validTypes.includes(file.type)) {
       toast.error("Ungültiges Dateiformat. Bitte MP4, WEBM oder JSON-Datei hochladen.");
@@ -33,7 +33,7 @@ export function ReplayAnalysis() {
     }
     
     if (file.size > maxSize) {
-      toast.error("Die Datei ist zu groß. Maximale Größe: 20MB");
+      toast.error("Die Datei ist zu groß. Maximale Größe: 1GB");
       e.target.value = '';
       setSelectedFile(null);
       return;
@@ -147,6 +147,9 @@ export function ReplayAnalysis() {
         </h1>
         <p className="text-muted-foreground">
           Upload your Brawl Stars replays and our AI will analyze your gameplay, identify mistakes, and provide personalized tips.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          Unterstützt Dateien bis zu 1GB Größe.
         </p>
       </div>
       
