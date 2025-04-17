@@ -6,7 +6,8 @@ import {
   superRareBrawlers, 
   epicBrawlers,
   mythicBrawlers,
-  legendaryBrawlers
+  legendaryBrawlers,
+  chromaticBrawlers
 } from '@/data/brawlers/index';
 
 // Get all brawlers from local data sources to ensure we have a complete set
@@ -18,7 +19,8 @@ const getAllLocalBrawlers = (): Brawler[] => {
     ...superRareBrawlers,
     ...epicBrawlers,
     ...mythicBrawlers,
-    ...legendaryBrawlers
+    ...legendaryBrawlers,
+    ...chromaticBrawlers
   ];
 };
 
@@ -33,32 +35,11 @@ const addLocalImageUrls = (brawlers: Brawler[]): Brawler[] => {
 
 export const fetchBrawlers = async (): Promise<Brawler[]> => {
   try {
-    console.log("Attempting to fetch brawlers from API or cache...");
+    console.log("Loading all local brawlers...");
     
-    // First check if we have cached data
-    const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
-    if (cachedBrawlers) {
-      try {
-        const cache = JSON.parse(cachedBrawlers);
-        const { data, timestamp } = cache;
-        
-        // Check if cache is still fresh (less than 30 minutes)
-        if (Date.now() - timestamp < 30 * 60 * 1000) {
-          console.log('Using cached brawlers data');
-          return addLocalImageUrls(data);
-        }
-      } catch (cacheError) {
-        console.error('Error parsing cache:', cacheError);
-        // Continue to fetch if cache parsing fails
-      }
-    }
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Always use the full set of local brawlers to ensure we have all 90
+    // Always use the full set of local brawlers
     const fullLocalBrawlers = getAllLocalBrawlers();
-    console.log(`Using complete local data set with ${fullLocalBrawlers.length} brawlers`);
+    console.log(`Total brawlers loaded: ${fullLocalBrawlers.length}`);
     
     // Add proper image URLs
     const enhancedBrawlers = addLocalImageUrls(fullLocalBrawlers);
@@ -77,7 +58,6 @@ export const fetchBrawlers = async (): Promise<Brawler[]> => {
   }
 };
 
-// Rest of the service remains the same
 export const fetchMaps = async (): Promise<any[]> => {
   try {
     // Simulate API call delay
