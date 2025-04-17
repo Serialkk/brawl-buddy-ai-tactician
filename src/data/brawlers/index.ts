@@ -6,7 +6,7 @@ import { superRareBrawlers } from "./super-rare-brawlers";
 import { epicBrawlers } from "./epic-brawlers";
 import { mythicBrawlers } from "./mythic-brawlers";
 import { legendaryBrawlers } from "./legendary-brawlers";
-import { chromaticBrawlers } from "./chromatic-brawlers"; // Add chromatic brawlers import
+import { chromaticBrawlers } from "./chromatic-brawlers";
 
 // Combine all brawlers into one array
 export const brawlers: Brawler[] = [
@@ -16,7 +16,7 @@ export const brawlers: Brawler[] = [
   ...epicBrawlers,
   ...mythicBrawlers,
   ...legendaryBrawlers,
-  ...chromaticBrawlers // Include chromatic brawlers
+  ...chromaticBrawlers
 ];
 
 // Re-export brawler types and roles using export type
@@ -30,5 +30,5 @@ export {
   epicBrawlers,
   mythicBrawlers,
   legendaryBrawlers,
-  chromaticBrawlers // Export chromatic brawlers
+  chromaticBrawlers
 };

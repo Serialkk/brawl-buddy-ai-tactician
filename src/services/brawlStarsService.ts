@@ -1,28 +1,6 @@
+
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlers } from '@/data/brawlers';
-import { 
-  startingAndTrophyRoadBrawlers, 
-  rareBrawlers, 
-  superRareBrawlers, 
-  epicBrawlers,
-  mythicBrawlers,
-  legendaryBrawlers,
-  chromaticBrawlers
-} from '@/data/brawlers/index';
-
-// Get all brawlers from local data sources to ensure we have a complete set
-const getAllLocalBrawlers = (): Brawler[] => {
-  // Combine all brawler arrays to make sure we have the full collection
-  return [
-    ...startingAndTrophyRoadBrawlers,
-    ...rareBrawlers,
-    ...superRareBrawlers,
-    ...epicBrawlers,
-    ...mythicBrawlers,
-    ...legendaryBrawlers,
-    ...chromaticBrawlers
-  ];
-};
 
 // Ensure all brawlers have valid local image paths
 const addLocalImageUrls = (brawlers: Brawler[]): Brawler[] => {
@@ -35,34 +13,77 @@ const addLocalImageUrls = (brawlers: Brawler[]): Brawler[] => {
 
 export const fetchBrawlers = async (): Promise<Brawler[]> => {
   try {
-    console.log("Loading all local brawlers...");
+    console.log("Fetching brawlers from Brawlify API...");
     
-    // Always use the full set of local brawlers
-    const fullLocalBrawlers = getAllLocalBrawlers();
-    console.log(`Total brawlers loaded: ${fullLocalBrawlers.length}`);
+    // Try to retrieve from cache first
+    const cachedBrawlers = localStorage.getItem('brawl-brawlers-cache');
+    if (cachedBrawlers) {
+      const cache = JSON.parse(cachedBrawlers);
+      const { data, timestamp } = cache;
+      
+      // Check if cache is fresh (less than 30 minutes)
+      if (Date.now() - timestamp < 30 * 60 * 1000) {
+        console.log('Using cached brawlers data');
+        return data;
+      }
+    }
     
-    // Add proper image URLs
-    const enhancedBrawlers = addLocalImageUrls(fullLocalBrawlers);
+    // If cache is stale or doesn't exist, try the Brawlify API
+    const response = await fetch('https://api.brawlify.com/v1/brawlers', {
+      signal: AbortSignal.timeout(5000) // Timeout after 5 seconds
+    });
     
-    // Cache the enhanced data
-    localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
-      data: enhancedBrawlers,
-      timestamp: Date.now(),
-    }));
+    if (!response.ok) {
+      throw new Error(`API responded with status ${response.status}`);
+    }
     
-    return enhancedBrawlers;
+    const data = await response.json();
+    
+    if (data.list && Array.isArray(data.list) && data.list.length > 0) {
+      console.log(`Received ${data.list.length} brawlers from API`);
+      
+      // Map API response to our Brawler type
+      const apiBrawlers = data.list.map((brawler: any) => ({
+        id: brawler.id,
+        name: brawler.name,
+        role: brawler.class?.name || "Unknown",
+        rarity: brawler.rarity?.name || "Unknown",
+        image: `/brawlers/${brawler.name.toLowerCase().replace(/\s+/g, '-')}.png`, // Use local images
+        stats: {
+          health: brawler.stats?.health || 0,
+          damage: brawler.stats?.damage || 0,
+          speed: brawler.stats?.speed || "Normal",
+          range: brawler.stats?.range || "Medium",
+        },
+        abilities: {
+          basic: brawler.description || "Unknown",
+          super: brawler.superDescription || "Unknown",
+          gadget1: brawler.gadgets?.[0]?.name || "Unknown",
+          gadget2: brawler.gadgets?.[1]?.name,
+          starPower1: brawler.starPowers?.[0]?.name || "Unknown",
+          starPower2: brawler.starPowers?.[1]?.name,
+        }
+      }));
+      
+      // Cache the enhanced data
+      localStorage.setItem('brawl-brawlers-cache', JSON.stringify({
+        data: apiBrawlers,
+        timestamp: Date.now(),
+      }));
+      
+      return apiBrawlers;
+    }
+    
+    throw new Error("Invalid data format from API");
   } catch (error) {
-    console.error('Error in fetchBrawlers:', error);
+    console.error('Error fetching from Brawlify API:', error);
     // Final fallback to local data with local image URLs
-    return addLocalImageUrls(getAllLocalBrawlers());
+    return addLocalImageUrls(localBrawlers);
   }
 };
 
 export const fetchMaps = async (): Promise<any[]> => {
   try {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
     // Try to retrieve from cache first
     const cachedMaps = localStorage.getItem('brawl-maps-cache');
     if (cachedMaps) {
@@ -76,39 +97,34 @@ export const fetchMaps = async (): Promise<any[]> => {
       }
     }
     
-    // If cache is stale or doesn't exist, try the API
-    try {
-      const response = await fetch('https://api.example.com/maps', {
-        signal: AbortSignal.timeout(3000) // Timeout after 3 seconds
-      });
-      
-      if (!response.ok) {
-        throw new Error(`API responded with status ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      // Cache the response
-      localStorage.setItem('brawl-maps-cache', JSON.stringify({
-        data,
-        timestamp: Date.now(),
-      }));
-      
-      // Type guard to check if data has a 'list' property and it's an array
-      if (typeof data === 'object' && data !== null && 'list' in data && Array.isArray((data as {list: any[]}).list)) {
-        return (data as {list: any[]}).list.map(map => ({
-          id: map.id,
-          name: map.name,
-          // ... other map properties
-        }));
-      }
-      
-      return data || [];
-    } catch (apiError) {
-      // If API fails, return an empty array
-      console.warn('API fetch failed for maps, returning empty array');
-      return [];
+    // If cache is stale or doesn't exist, try the Brawlify API
+    const response = await fetch('https://api.brawlify.com/v1/maps', {
+      signal: AbortSignal.timeout(5000) // Timeout after 5 seconds
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API responded with status ${response.status}`);
     }
+    
+    const data = await response.json();
+    
+    // Cache the response
+    localStorage.setItem('brawl-maps-cache', JSON.stringify({
+      data: data.list || [],
+      timestamp: Date.now(),
+    }));
+    
+    if (typeof data === 'object' && data !== null && 'list' in data && Array.isArray((data as {list: any[]}).list)) {
+      return (data as {list: any[]}).list.map(map => ({
+        id: map.id,
+        name: map.name,
+        gameMode: map.gameMode?.name || "Unknown",
+        image: map.imageUrl || null,
+        environment: map.environment?.name || "Unknown"
+      }));
+    }
+    
+    return [];
   } catch (error) {
     console.error('Error fetching maps:', error);
     return [];
