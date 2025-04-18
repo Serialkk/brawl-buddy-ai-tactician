@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,9 +16,7 @@ import { DefaultLoadingComponent } from "@/utils/lazyLoad";
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-
-// Configure QueryClient with optimized settings
-const queryClient = configureQueryClient();
+const Profile = lazy(() => import("./pages/Profile"));
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -36,7 +33,7 @@ const App = () => (
                     <Route path="/auth" element={<Auth />} />
                     <Route element={<ProtectedRoute />}>
                       <Route path="/" element={<Index />} />
-                      {/* Add additional protected routes here */}
+                      <Route path="/profile" element={<Profile />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
                   </Routes>
