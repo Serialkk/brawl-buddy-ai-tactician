@@ -4,13 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Map, Target, Shield, MoveHorizontal, MoveVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PositioningMap } from "../components/PositioningMap";
-import { positioningTips, mapTips } from "../data/brawlers";
+import { positioningTips, mapTips, getDefaultPositioningTip, getDefaultMapTip } from "../data/brawlers";
 
 interface BrawlerPositioningProps {
   brawler: string;
 }
 
 export const BrawlerPositioning: React.FC<BrawlerPositioningProps> = ({ brawler }) => {
+  // Verwende die vorhandenen Positionierungstipps oder Standardwerte für neue Brawler
+  const positioningTip = positioningTips[brawler as keyof typeof positioningTips] || getDefaultPositioningTip(brawler);
+  const mapTip = mapTips[brawler as keyof typeof mapTips] || getDefaultMapTip(brawler);
+
   return (
     <Card className="brawl-card">
       <CardHeader>
@@ -52,7 +56,7 @@ export const BrawlerPositioning: React.FC<BrawlerPositioningProps> = ({ brawler 
             <h3 className="font-bold mb-2 flex items-center gap-2">
               <Map className="h-4 w-4 text-brawl-yellow" /> Positioning Strategy
             </h3>
-            <p>{positioningTips[brawler as keyof typeof positioningTips] || "No specific positioning tips available for this Brawler."}</p>
+            <p>{positioningTip}</p>
           </div>
           
           <div className="p-4 border border-border rounded-lg bg-secondary">
@@ -85,7 +89,7 @@ export const BrawlerPositioning: React.FC<BrawlerPositioningProps> = ({ brawler 
             <h3 className="font-bold mb-2 flex items-center gap-2">
               <Shield className="h-4 w-4 text-brawl-green" /> Map Preferences
             </h3>
-            <p>{mapTips[brawler as keyof typeof mapTips] || "No specific map tips available for this Brawler."}</p>
+            <p>{mapTip}</p>
           </div>
         </div>
       </CardContent>

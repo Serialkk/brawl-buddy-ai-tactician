@@ -3,13 +3,16 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Zap } from "lucide-react";
-import { abilities } from "../data/brawlers";
+import { abilities, getDefaultAbilities } from "../data/brawlers";
 
 interface BrawlerAbilitiesProps {
   brawler: string;
 }
 
 export const BrawlerAbilities: React.FC<BrawlerAbilitiesProps> = ({ brawler }) => {
+  // Verwende die vorhandenen Fähigkeitsdaten oder Standardwerte für neue Brawler
+  const brawlerAbilities = abilities[brawler as keyof typeof abilities] || getDefaultAbilities(brawler);
+
   return (
     <Card className="brawl-card">
       <CardHeader>
@@ -20,7 +23,7 @@ export const BrawlerAbilities: React.FC<BrawlerAbilitiesProps> = ({ brawler }) =
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {(abilities[brawler as keyof typeof abilities] || []).map((ability, idx) => (
+          {brawlerAbilities.map((ability, idx) => (
             <div key={idx} className="flex flex-col md:flex-row gap-4 items-start md:items-center border-b border-border pb-4 last:border-0 last:pb-0">
               <div className="flex-shrink-0">
                 <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center">

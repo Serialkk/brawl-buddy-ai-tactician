@@ -1,11 +1,10 @@
+// Importiere alle Brawlers aus der zentralen Datenquelle
+import { brawlers as allBrawlers } from "@/data/brawlers";
 
-// List of available brawlers
-export const brawlers = [
-  "Shelly", "Colt", "Brock", "Bull", "Jessie", "Nita", 
-  "Dynamike", "El Primo", "Barley", "Poco", "Rosa", "Rico"
-];
+// Liste aller verfügbaren Brawler-Namen
+export const brawlers = allBrawlers.map(brawler => brawler.name);
 
-// Brawler abilities
+// Brawler abilities (bestehende Daten beibehalten)
 export const abilities = {
   "Shelly": [
     { name: "Buckshot", type: "Basic", desc: "Fires a wide spread of shells that can hit multiple opponents" },
@@ -81,7 +80,7 @@ export const abilities = {
   ]
 };
 
-// Brawler tips
+// Brawler tips (bestehende Daten beibehalten)
 export const tips = {
   "Shelly": [
     "Save your Super for high-value targets or to break important walls",
@@ -169,7 +168,7 @@ export const tips = {
   ]
 };
 
-// Map tips for each brawler
+// Map tips for each brawler (bestehende Daten beibehalten)
 export const mapTips = {
   "Shelly": "Excel in maps with lots of bushes and walls. Use cover to get close to enemies.",
   "Colt": "Perform best in open maps with long sight lines where you can utilize your range.",
@@ -185,7 +184,7 @@ export const mapTips = {
   "Rico": "Performs well in maps with walls to bounce shots. Control areas by bouncing bullets around corners."
 };
 
-// Matchup data for each brawler
+// Matchup data for each brawler (bestehende Daten beibehalten)
 export const matchups = {
   "Shelly": {
     "strong": ["Bull", "El Primo", "Rosa"],
@@ -237,7 +236,7 @@ export const matchups = {
   }
 };
 
-// Positioning tips for each brawler
+// Positioning tips for each brawler (bestehende Daten beibehalten)
 export const positioningTips = {
   "Shelly": "Utilize bushes for ambushes and stay at medium range to maximize damage. Avoid long open areas where snipers will outrange you.",
   "Colt": "Stay at maximum range and use walls to your advantage. Position yourself where you can create long sight lines.",
@@ -251,4 +250,38 @@ export const positioningTips = {
   "Poco": "Position yourself behind tanks but in range to heal multiple teammates. Avoid being the frontline.",
   "Rosa": "Control bushes and use your shield to push enemies back. Be the frontline for your team.",
   "Rico": "Position at an angle where your shots can bounce. Utilize narrow corridors for maximum effectiveness."
+};
+
+// Funktionen zum dynamischen Erstellen von Platzhalter-Informationen für fehlende Brawler
+export const getDefaultAbilities = (brawlerName: string) => {
+  return [
+    { name: "Basic Attack", type: "Basic", desc: "Grundangriff von " + brawlerName },
+    { name: "Super", type: "Super", desc: "Spezialangriff von " + brawlerName },
+    { name: "Gadget", type: "Gadget", desc: "Erstes Gadget von " + brawlerName },
+    { name: "Star Power", type: "Star Power", desc: "Erstes Star Power von " + brawlerName }
+  ];
+};
+
+export const getDefaultTips = (brawlerName: string) => {
+  return [
+    "Nutze die Stärken von " + brawlerName + " effektiv im Kampf",
+    "Positioniere dich strategisch je nach Angriffsreichweite",
+    "Kombiniere deine Fähigkeiten für maximalen Schaden",
+    "Arbeite mit deinem Team zusammen"
+  ];
+};
+
+export const getDefaultMatchups = () => {
+  return {
+    "strong": ["Gegner 1", "Gegner 2", "Gegner 3"],
+    "weak": ["Gegner 4", "Gegner 5", "Gegner 6"]
+  };
+};
+
+export const getDefaultPositioningTip = (brawlerName: string) => {
+  return `Positioniere ${brawlerName} basierend auf seiner Reichweite und Rolle im Team optimal auf der Karte.`;
+};
+
+export const getDefaultMapTip = (brawlerName: string) => {
+  return `${brawlerName} kann auf verschiedenen Karten effektiv eingesetzt werden. Achte auf offene Bereiche und Deckungsmöglichkeiten.`;
 };

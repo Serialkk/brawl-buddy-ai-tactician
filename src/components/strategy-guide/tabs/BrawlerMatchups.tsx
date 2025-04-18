@@ -3,13 +3,16 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Crosshair, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { matchups } from "../data/brawlers";
+import { matchups, getDefaultMatchups } from "../data/brawlers";
 
 interface BrawlerMatchupsProps {
   brawler: string;
 }
 
 export const BrawlerMatchups: React.FC<BrawlerMatchupsProps> = ({ brawler }) => {
+  // Verwende die vorhandenen Matchup-Daten oder Standardwerte für neue Brawler
+  const brawlerMatchups = matchups[brawler as keyof typeof matchups] || getDefaultMatchups();
+
   return (
     <Card className="brawl-card">
       <CardHeader>
@@ -25,7 +28,7 @@ export const BrawlerMatchups: React.FC<BrawlerMatchupsProps> = ({ brawler }) => 
               <ThumbsUp className="h-4 w-4" /> Strong Against
             </h3>
             <div className="space-y-3">
-              {(matchups[brawler as keyof typeof matchups]?.strong || []).map((enemy, idx) => (
+              {brawlerMatchups.strong.map((enemy, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -44,7 +47,7 @@ export const BrawlerMatchups: React.FC<BrawlerMatchupsProps> = ({ brawler }) => 
               <ThumbsDown className="h-4 w-4" /> Weak Against
             </h3>
             <div className="space-y-3">
-              {(matchups[brawler as keyof typeof matchups]?.weak || []).map((enemy, idx) => (
+              {brawlerMatchups.weak.map((enemy, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">

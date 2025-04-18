@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,10 +8,12 @@ import { BrawlerAbilities } from "./tabs/BrawlerAbilities";
 import { BrawlerTips } from "./tabs/BrawlerTips";
 import { BrawlerPositioning } from "./tabs/BrawlerPositioning";
 import { BrawlerMatchups } from "./tabs/BrawlerMatchups";
-import { brawlers } from "./data/brawlers";
+import { brawlers as allBrawlersData } from "@/data/brawlers";
 
 export function StrategyGuide() {
-  const [selectedBrawler, setSelectedBrawler] = useState("Shelly");
+  // Extrahiere alle Brawler-Namen aus der vollständigen Datenquelle
+  const allBrawlerNames = allBrawlersData.map(brawler => brawler.name);
+  const [selectedBrawler, setSelectedBrawler] = useState(allBrawlerNames[0] || "Shelly");
 
   return (
     <div className="space-y-6">
@@ -31,13 +34,14 @@ export function StrategyGuide() {
           <CardDescription>Choose a Brawler to see detailed strategies</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {brawlers.map(brawler => (
+          <div className="flex flex-wrap gap-2 justify-center max-h-[300px] overflow-y-auto p-2">
+            {allBrawlerNames.map(brawler => (
               <Button
                 key={brawler}
                 variant={selectedBrawler === brawler ? "default" : "outline"}
                 className={selectedBrawler === brawler ? "bg-brawl-purple hover:bg-brawl-purple/90" : ""}
                 onClick={() => setSelectedBrawler(brawler)}
+                size="sm"
               >
                 {brawler}
               </Button>
