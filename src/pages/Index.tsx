@@ -1,14 +1,21 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
+import { GradientText } from '@/components/ui/brawl-classes';
 
 const Index = () => {
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple">
+      <GradientText 
+        from="from-white" 
+        to="to-brawl-yellow" 
+        className="text-3xl font-bold mb-6 text-center"
+      >
         Willkommen zur Brawl Stars Balance Tracker App!
-      </h1>
-      <p className="text-lg text-center text-muted-foreground mb-8">
+      </GradientText>
+      
+      <p className="text-lg text-center text-white/90 mb-8">
         Bleibe immer auf dem Laufenden mit den neuesten Änderungen und Trends in Brawl Stars.
       </p>
       
