@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PatchNoteSummary } from "@/components/patch-notes/PatchNoteSummary";
 import { fetchLatestPatchNotes } from "@/services/patchNotesService";
 import { Bell, AlertTriangle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Fallback mock data in case API fails
 const mockPatchNote = {
@@ -79,11 +80,30 @@ const PatchNotes = () => {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
-      <div className="bg-black/50 rounded-lg p-4 mb-6">
+      <div className="bg-black/50 rounded-lg p-4 mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-center font-lilita text-brawl-yellow/90">
           Patch Notes Zusammenfassung
         </h1>
+        {error && (
+          <div className="flex items-center text-amber-400 gap-1">
+            <AlertTriangle className="h-5 w-5" />
+            <span className="text-sm">Offline Modus</span>
+          </div>
+        )}
       </div>
+      
+      {error && (
+        <div className="bg-amber-400/10 border border-amber-400/30 rounded-lg p-4 mb-6 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-400 mt-1 flex-shrink-0" />
+          <div>
+            <h3 className="font-medium text-amber-400 mb-1">API Verbindungsfehler</h3>
+            <p className="text-sm text-muted-foreground">
+              Die aktuellen Patch Notes konnten nicht geladen werden. Es werden die zuletzt bekannten Änderungen angezeigt.
+            </p>
+          </div>
+        </div>
+      )}
+      
       <PatchNoteSummary patchNote={transformedPatchNote} />
     </div>
   );

@@ -1,5 +1,6 @@
 
 import { toast } from "sonner";
+import { handleApiError } from "@/utils/apiUtils";
 
 export interface BrawlifyPatchNote {
   name: string;
@@ -12,21 +13,34 @@ export interface BrawlifyPatchNote {
   }[];
 }
 
+/**
+ * Attempts to fetch the latest patch notes from the Brawlify API
+ * Falls back to null if the API fails, which will trigger using the mock data
+ */
 export const fetchLatestPatchNotes = async (): Promise<BrawlifyPatchNote | null> => {
   try {
+    // First try with the expected endpoint
     const response = await fetch('https://api.brawlify.com/v1/events/balance-changes', {
-      signal: AbortSignal.timeout(5000)
+      signal: AbortSignal.timeout(5000),
+      headers: {
+        'Accept': 'application/json'
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
+      console.log(`Balance changes API returned status ${response.status}, falling back to mock data`);
+      return null;
     }
 
     const data = await response.json();
-    return data.list?.[0] || null;
+    if (!data.list || data.list.length === 0) {
+      console.log("No patch notes found in API response");
+      return null;
+    }
+    
+    return data.list[0];
   } catch (error) {
-    console.error('Error fetching patch notes:', error);
-    toast.error("Fehler beim Laden der Patch Notes");
+    handleApiError(error, "Patch Notes");
     return null;
   }
 };
