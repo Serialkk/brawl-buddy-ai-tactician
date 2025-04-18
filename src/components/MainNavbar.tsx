@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Map, BarChart3, Clock, Swords, BookOpen, Search, Settings, Bell, User } from 'lucide-react';
@@ -13,51 +12,51 @@ const MainNavbar = () => {
 
   return (
     <div className="w-full bg-background/95 backdrop-blur-md border-b border-brawl-purple/20 z-40 fixed top-12 left-0 right-0">
-      <div className="container mx-auto flex items-center justify-between h-16">
-        {/* Linker Bereich (Logo oder Branding) */}
+      <div className="container mx-auto flex items-center justify-between h-20">
+        {/* Left section (Logo or Branding) */}
         <div className="flex items-center">
           <Link to="/" className="font-lilita text-xl text-brawl-yellow flex items-center gap-2">
             Brawl-Buddy
           </Link>
         </div>
         
-        {/* Zentraler Bereich - Hauptnavigation */}
+        {/* Center section - Main navigation */}
         <div className="hidden md:flex mx-auto relative">
-          <div className="bg-black/40 backdrop-blur-sm rounded-full border border-brawl-purple/30 relative">
-            {/* Menu Titel - Adjusted positioning */}
+          <div className="bg-black/40 backdrop-blur-sm rounded-full border border-brawl-purple/30 relative px-2">
+            {/* Menu title - Adjusted positioning */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <span className="bg-brawl-purple/80 text-white px-3 py-1 rounded-full text-xs font-bold">
                 Menu
               </span>
             </div>
             
-            <nav className="flex">
-              <Link to="/maps" className={`px-4 py-2 flex items-center gap-1.5 font-medium transition-colors ${isActive('/maps') ? 'text-brawl-yellow' : 'text-white/80 hover:text-white'}`}>
+            <nav className="flex space-x-2">
+              <Link to="/maps" className={`px-4 py-3 flex items-center gap-1.5 font-medium transition-colors rounded-full ${isActive('/maps') ? 'text-brawl-yellow bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/5'}`}>
                 <Map className="h-4 w-4" />
                 <span>Maps</span>
               </Link>
               
-              <Link to="/replay-analysis" className={`px-4 py-2 flex items-center gap-1.5 font-medium transition-colors ${isActive('/replay-analysis') ? 'text-brawl-yellow' : 'text-white/80 hover:text-white'}`}>
+              <Link to="/replay-analysis" className={`px-4 py-3 flex items-center gap-1.5 font-medium transition-colors rounded-full ${isActive('/replay-analysis') ? 'text-brawl-yellow bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/5'}`}>
                 <Clock className="h-4 w-4" />
                 <span>Replay</span>
               </Link>
               
-              <Link to="/team-composition" className={`px-4 py-2 flex items-center gap-1.5 font-medium transition-colors ${isActive('/team-composition') ? 'text-brawl-yellow' : 'text-white/80 hover:text-white'}`}>
+              <Link to="/team-composition" className={`px-4 py-3 flex items-center gap-1.5 font-medium transition-colors rounded-full ${isActive('/team-composition') ? 'text-brawl-yellow bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/5'}`}>
                 <Swords className="h-4 w-4" />
                 <span>Teams</span>
               </Link>
               
-              <Link to="/strategy" className={`px-4 py-2 flex items-center gap-1.5 font-medium transition-colors ${isActive('/strategy') ? 'text-brawl-yellow' : 'text-white/80 hover:text-white'}`}>
+              <Link to="/strategy" className={`px-4 py-3 flex items-center gap-1.5 font-medium transition-colors rounded-full ${isActive('/strategy') ? 'text-brawl-yellow bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/5'}`}>
                 <BookOpen className="h-4 w-4" />
                 <span>Strategie</span>
               </Link>
               
-              <Link to="/stats" className={`px-4 py-2 flex items-center gap-1.5 font-medium transition-colors ${isActive('/stats') ? 'text-brawl-yellow' : 'text-white/80 hover:text-white'}`}>
+              <Link to="/stats" className={`px-4 py-3 flex items-center gap-1.5 font-medium transition-colors rounded-full ${isActive('/stats') ? 'text-brawl-yellow bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/5'}`}>
                 <BarChart3 className="h-4 w-4" />
                 <span>Statistiken</span>
               </Link>
               
-              <Link to="/patch-notes" className={`px-4 py-2 flex items-center gap-1.5 font-medium transition-colors ${isActive('/patch-notes') ? 'text-brawl-yellow' : 'text-white/80 hover:text-white'}`}>
+              <Link to="/patch-notes" className={`px-4 py-3 flex items-center gap-1.5 font-medium transition-colors rounded-full ${isActive('/patch-notes') ? 'text-brawl-yellow bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/5'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 3v4a1 1 0 0 0 1 1h4" />
                   <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z" />
@@ -71,7 +70,7 @@ const MainNavbar = () => {
           </div>
         </div>
         
-        {/* Rechter Bereich - Benutzeraktionen */}
+        {/* Right section - User actions */}
         <div className="flex items-center space-x-3">
           <Button variant="ghost" size="icon" className="text-white/80 hover:text-white">
             <Search className="h-[1.2rem] w-[1.2rem]" />
@@ -95,7 +94,7 @@ const MainNavbar = () => {
         </div>
       </div>
       
-      {/* Mobile Navigation (nur angezeigt auf kleineren Bildschirmen) */}
+      {/* Mobile Navigation (only shown on smaller screens) */}
       <div className="md:hidden container mx-auto overflow-x-auto pb-2">
         <div className="flex space-x-1 w-max">
           <Link to="/maps" className={`px-3 py-1.5 flex items-center gap-1.5 font-medium text-sm rounded-full transition-colors ${isActive('/maps') ? 'bg-brawl-purple/20 text-brawl-yellow' : 'text-white/80'}`}>
