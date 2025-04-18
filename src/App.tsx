@@ -40,7 +40,7 @@ const App = () => (
               <BrowserRouter>
                 {/* Background Image */}
                 <div 
-                  className="fixed inset-0 z-0" 
+                  className="fixed inset-0 z-0 bg-black/20 backdrop-blur-sm" 
                   style={{
                     backgroundImage: 'url("/lovable-uploads/4a743b64-2eaa-48a1-9347-0cdfd55aa83d.png")',
                     backgroundSize: 'cover',
@@ -50,7 +50,7 @@ const App = () => (
                 />
 
                 {/* Content Container with Background Overlay */}
-                <div className="relative z-10 min-h-screen bg-black/40 backdrop-blur-sm">
+                <div className="relative z-10 min-h-screen">
                   {/* Breaking News Banner */}
                   <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-brawl-red via-brawl-purple to-brawl-blue p-2 text-white shadow-lg z-50">
                     <div className="container mx-auto">
