@@ -45,7 +45,7 @@ const App = () => (
                   style={{
                     backgroundImage: 'url("/lovable-uploads/4a743b64-2eaa-48a1-9347-0cdfd55aa83d.png")',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center bottom', // Moved lower
+                    backgroundPosition: 'center bottom 20%', // Moved further down
                     backgroundRepeat: 'no-repeat'
                   }}
                 />
