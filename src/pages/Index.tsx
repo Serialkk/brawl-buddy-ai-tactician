@@ -14,7 +14,7 @@ const Index = () => {
           to="to-brawl-yellow" 
           className="text-3xl font-bold text-center block"
         >
-          Willkommen zur Brawl Stars Balance Tracker App!
+          Willkommen zur Brawl-Buddy-AI-Tactician!
         </GradientText>
       </div>
       
