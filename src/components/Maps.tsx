@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useGameData } from "@/contexts/GameDataContext";
 import { useResponsive } from "@/hooks/useResponsive";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { MapDetailsModal } from "./maps/MapDetailsModal";
 
 // Statische Fallback-Daten für den Fall, dass die API fehlschlägt
 const gameModesWithMaps = [
@@ -98,6 +99,9 @@ export function Maps() {
   const { maps: apiMaps, isLoadingMaps, refetchMaps } = useGameData();
   const [gameModes, setGameModes] = useState<string[]>([]);
   const { md } = useResponsive();
+  
+  const [selectedMap, setSelectedMap] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Use game data context instead of direct fetch
   useEffect(() => {
@@ -277,10 +281,18 @@ export function Maps() {
                         <TableHead>Veröffentlichung</TableHead>
                       </TableRow>
                     </TableHeader>
+                    
                     <TableBody>
                       {filteredMaps.length > 0 ? (
                         filteredMaps.map((map: any, idx: number) => (
-                          <TableRow key={apiMaps && apiMaps.length > 0 ? map.id : map.name} className="hover:bg-muted/50">
+                          <TableRow 
+                            key={apiMaps && apiMaps.length > 0 ? map.id : map.name} 
+                            className="hover:bg-muted/50 cursor-pointer"
+                            onClick={() => {
+                              setSelectedMap(map);
+                              setIsModalOpen(true);
+                            }}
+                          >
                             <TableCell className="font-medium">
                               {apiMaps && apiMaps.length > 0 ? map.name : map.name}
                             </TableCell>
@@ -340,6 +352,15 @@ export function Maps() {
             </div>
           </CardContent>
         </Card>
+      )}
+      
+      {/* Add Modal */}
+      {selectedMap && (
+        <MapDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          map={selectedMap}
+        />
       )}
     </div>
   );
