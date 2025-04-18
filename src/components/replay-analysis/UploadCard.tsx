@@ -1,7 +1,7 @@
 
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, EyeIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface UploadCardProps {
@@ -18,11 +18,11 @@ export function UploadCard({ onFileSelect }: UploadCardProps) {
     const file = files[0];
     
     // Check file type and size
-    const validTypes = ['video/mp4', 'video/webm', 'application/json']; // Allow video and JSON replay files
+    const validTypes = ['video/mp4', 'video/webm', 'application/json', 'image/jpeg', 'image/png']; // Added image formats
     const maxSize = 1024 * 1024 * 1024; // 1GB max
     
     if (!validTypes.includes(file.type)) {
-      toast.error("Ungültiges Dateiformat. Bitte MP4, WEBM oder JSON-Datei hochladen.");
+      toast.error("Ungültiges Dateiformat. Bitte MP4, WEBM, PNG, JPEG oder JSON-Datei hochladen.");
       e.target.value = '';
       return;
     }
@@ -62,16 +62,19 @@ export function UploadCard({ onFileSelect }: UploadCardProps) {
         <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
           <Upload className="h-10 w-10 text-muted-foreground" />
         </div>
-        <h3 className="text-xl font-bold mb-2">Upload Replay</h3>
-        <p className="text-muted-foreground mb-6">
+        <h3 className="text-xl font-bold mb-2 font-lilita">Upload Replay</h3>
+        <p className="text-muted-foreground mb-2">
           Drag and drop your replay file or click to browse
+        </p>
+        <p className="text-sm text-brawl-blue mb-6">
+          <EyeIcon className="inline h-4 w-4 mr-1" /> YOLOv8 Objekt-Erkennung aktiviert
         </p>
         <input
           type="file"
           className="hidden"
           ref={fileInputRef}
           onChange={handleFileSelect}
-          accept=".mp4,.webm,.json"
+          accept=".mp4,.webm,.json,.jpg,.jpeg,.png"
         />
         <Button 
           onClick={() => fileInputRef.current?.click()} 

@@ -4,9 +4,21 @@ import { ResultHeader } from "./ResultHeader";
 import { StrengthsCard } from "./StrengthsCard";
 import { WeaknessesCard } from "./WeaknessesCard";
 import { PerformanceMetricsCard } from "./PerformanceMetricsCard";
+import { BrawlerDetectionCard } from "./BrawlerDetectionCard";
 import { generateAnalysisPDF } from "./utils/pdfUtils";
-import { FileText, Download } from "lucide-react"; // Replaced FilePdf with FileText
+import { FileText, Download } from "lucide-react"; 
 import { toast } from "sonner";
+
+interface DetectionBox {
+  box: {
+    xmin: number;
+    ymin: number;
+    xmax: number;
+    ymax: number;
+  };
+  label: string;
+  score: number;
+}
 
 interface ReplayData {
   brawlerUsed: string;
@@ -20,6 +32,7 @@ interface ReplayData {
   strengths: string[];
   weaknesses: string[];
   timestamp: string;
+  detectedObjects?: DetectionBox[];
 }
 
 interface ResultsViewProps {
@@ -46,6 +59,10 @@ export function ResultsView({ replayData, onReset }: ResultsViewProps) {
         onReset={onReset}
       />
       
+      {replayData.detectedObjects && replayData.detectedObjects.length > 0 && (
+        <BrawlerDetectionCard detections={replayData.detectedObjects} />
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StrengthsCard strengths={replayData.strengths} />
         <WeaknessesCard weaknesses={replayData.weaknesses} />
@@ -54,16 +71,16 @@ export function ResultsView({ replayData, onReset }: ResultsViewProps) {
       <PerformanceMetricsCard metrics={replayData.metrics} />
 
       <div className="flex flex-wrap justify-center gap-4 mt-8">
-        <Button onClick={onReset} className="brawl-button brawl-button-primary">
+        <Button onClick={onReset} className="brawl-button brawl-button-primary font-lilita">
           Analyze Another Replay
         </Button>
         
         <Button 
           onClick={handleDownloadPDF} 
           variant="outline" 
-          className="border-brawl-blue text-brawl-blue hover:bg-brawl-blue/10"
+          className="border-brawl-blue text-brawl-blue hover:bg-brawl-blue/10 font-lilita"
         >
-          <FileText className="mr-2 h-5 w-5" /> {/* Replaced FilePdf with FileText */}
+          <FileText className="mr-2 h-5 w-5" />
           Download PDF
         </Button>
       </div>
