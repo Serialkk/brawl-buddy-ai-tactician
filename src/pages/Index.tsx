@@ -1,14 +1,20 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import { GradientText } from '@/components/ui/brawl-classes';
 import { ChatArea } from '@/components/chat/ChatArea';
 import { LoginBox } from '@/components/auth/LoginBox';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+  
+  // Debug-Logging für Authentifizierungsstatus
+  useEffect(() => {
+    console.log("Auth state on Index page:", { user, isLoading });
+  }, [user, isLoading]);
 
   return (
     <div className="container mx-auto p-6">
@@ -26,10 +32,19 @@ const Index = () => {
         Bleibe immer auf dem Laufenden mit den neuesten Änderungen und Trends in Brawl Stars.
       </p>
 
-      {/* Show login box only if user is not authenticated */}
-      {!user && (
+      {/* Login-Box mit Debugging */}
+      {isLoading ? (
+        <div className="mb-8 text-center text-white">
+          <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-brawl-purple mx-auto"></div>
+          <p className="mt-2">Authentifizierungsstatus wird geladen...</p>
+        </div>
+      ) : !user ? (
         <div className="mb-8">
           <LoginBox />
+        </div>
+      ) : (
+        <div className="mb-8 p-4 bg-black/30 rounded-lg text-center">
+          <p className="text-white">Willkommen zurück, {user.email || 'Benutzer'}!</p>
         </div>
       )}
       
