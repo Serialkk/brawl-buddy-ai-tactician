@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -40,11 +41,11 @@ const App = () => (
               <BrowserRouter>
                 {/* Background Image */}
                 <div 
-                  className="fixed inset-0 z-0 bg-black/20 backdrop-blur-sm" 
+                  className="fixed inset-0 z-0 bg-black/10 backdrop-blur-sm" 
                   style={{
                     backgroundImage: 'url("/lovable-uploads/4a743b64-2eaa-48a1-9347-0cdfd55aa83d.png")',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    backgroundPosition: 'center bottom', // Moved lower
                     backgroundRepeat: 'no-repeat'
                   }}
                 />
