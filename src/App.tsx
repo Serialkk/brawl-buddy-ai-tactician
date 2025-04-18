@@ -33,8 +33,8 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                {/* Global Breaking News Banner */}
-                <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-brawl-red via-brawl-purple to-brawl-blue p-4 text-white shadow-lg z-50">
+                {/* Global Breaking News Banner - fixed position, smaller height */}
+                <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-brawl-red via-brawl-purple to-brawl-blue p-2 text-white shadow-lg z-50">
                   <div className="container mx-auto">
                     <div className="flex flex-col md:flex-row items-center justify-between">
                       <div className="flex items-center gap-3 mb-2 md:mb-0">
@@ -54,8 +54,8 @@ const App = () => (
                   </div>
                 </div>
 
-                {/* Main content with padding to account for fixed banner */}
-                <div className="pt-24">
+                {/* Main content with smaller padding to account for fixed banner */}
+                <div className="pt-16">
                   <Suspense fallback={<DefaultLoadingComponent />}>
                     <Routes>
                       <Route path="/" element={<Index />} />
