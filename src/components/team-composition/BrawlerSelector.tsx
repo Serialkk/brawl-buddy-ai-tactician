@@ -33,7 +33,7 @@ export const BrawlerSelector = ({
   const [roleFilter, setRoleFilter] = useState("all");
   const [rarityFilter, setRarityFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const rarities = useMemo(() => {
     return Array.from(new Set(brawlers.map(b => b.rarity)));
