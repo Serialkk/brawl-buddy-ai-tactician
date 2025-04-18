@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlayerStats } from './PlayerStats';
+import { RecentMatches } from './RecentMatches';
+import { BrawlerStats } from './BrawlerStats';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,11 +20,10 @@ export const PlayerProfile = () => {
       const { data, error } = await supabase
         .from('user_stats')
         .select('*')
-        .eq('user_id', user.id)
-        .single();
+        .eq('user_id', user.id);
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!user?.id
   });
@@ -39,6 +40,11 @@ export const PlayerProfile = () => {
       </div>
     );
   }
+
+  // Calculate totals
+  const totalVictories = stats?.reduce((sum, stat) => sum + (stat.victories || 0), 0) || 0;
+  const totalDefeats = stats?.reduce((sum, stat) => sum + (stat.defeats || 0), 0) || 0;
+  const totalDraws = stats?.reduce((sum, stat) => sum + (stat.draws || 0), 0) || 0;
 
   return (
     <div className="space-y-6">
@@ -58,13 +64,16 @@ export const PlayerProfile = () => {
         <CardContent>
           <div className="mt-2 space-y-4">
             <PlayerStats
-              victories={stats?.victories || 0}
-              defeats={stats?.defeats || 0}
-              draws={stats?.draws || 0}
+              victories={totalVictories}
+              defeats={totalDefeats}
+              draws={totalDraws}
             />
           </div>
         </CardContent>
       </Card>
+      
+      <BrawlerStats stats={stats || []} />
+      <RecentMatches />
     </div>
   );
 };
