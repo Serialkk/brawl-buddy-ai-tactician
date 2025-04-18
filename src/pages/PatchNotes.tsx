@@ -1,3 +1,4 @@
+
 import React from "react";
 import { PatchNoteSummary } from "@/components/patch-notes/PatchNoteSummary";
 import { Bell, AlertTriangle } from "lucide-react";
@@ -44,9 +45,11 @@ const mockPatchNote = {
 const PatchNotes = () => {
   return (
     <div className="container mx-auto p-6 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple">
-        Patch Notes Zusammenfassung
-      </h1>
+      <div className="bg-black/50 rounded-lg p-4 mb-6">
+        <h1 className="text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple">
+          Patch Notes Zusammenfassung
+        </h1>
+      </div>
       <PatchNoteSummary patchNote={mockPatchNote} />
     </div>
   );
