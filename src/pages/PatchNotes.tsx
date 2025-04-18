@@ -1,9 +1,11 @@
 
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { PatchNoteSummary } from "@/components/patch-notes/PatchNoteSummary";
+import { fetchLatestPatchNotes } from "@/services/patchNotesService";
 import { Bell, AlertTriangle } from "lucide-react";
 
-// Update mockPatchNote with Rico's nerf
+// Fallback mock data in case API fails
 const mockPatchNote = {
   version: "61.0",
   date: "18. April 2025",
@@ -43,6 +45,38 @@ const mockPatchNote = {
 };
 
 const PatchNotes = () => {
+  const { data: patchNote, isLoading, error } = useQuery({
+    queryKey: ['patchNotes'],
+    queryFn: fetchLatestPatchNotes,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  const transformedPatchNote = React.useMemo(() => {
+    if (!patchNote) return mockPatchNote;
+
+    return {
+      version: patchNote.name,
+      date: new Date(patchNote.time).toLocaleDateString('de-DE'),
+      highlights: patchNote.description,
+      changes: patchNote.balance.map(change => ({
+        brawler: change.brawler,
+        type: change.type,
+        description: change.changes.join(", ")
+      }))
+    };
+  }, [patchNote]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6 max-w-4xl">
+        <div className="animate-pulse space-y-4">
+          <div className="h-12 bg-black/50 rounded-lg" />
+          <div className="h-96 bg-black/30 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="bg-black/50 rounded-lg p-4 mb-6">
@@ -50,7 +84,7 @@ const PatchNotes = () => {
           Patch Notes Zusammenfassung
         </h1>
       </div>
-      <PatchNoteSummary patchNote={mockPatchNote} />
+      <PatchNoteSummary patchNote={transformedPatchNote} />
     </div>
   );
 };
