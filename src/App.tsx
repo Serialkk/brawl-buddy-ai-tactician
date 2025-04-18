@@ -13,6 +13,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { configureQueryClient } from "@/utils/apiUtils";
 import { DefaultLoadingComponent } from "@/utils/lazyLoad";
 import { AlertTriangle, Bell } from "lucide-react";
+import MainNavbar from "@/components/MainNavbar";
 
 // Configure query client
 const queryClient = configureQueryClient();
@@ -54,7 +55,10 @@ const App = () => (
                   </div>
                 </div>
 
-                {/* Main content with smaller padding to account for fixed banner */}
+                {/* Navigation bar positioned below the banner */}
+                <MainNavbar />
+
+                {/* Main content with padding to account for fixed banner and navbar */}
                 <div className="pt-16">
                   <Suspense fallback={<DefaultLoadingComponent />}>
                     <Routes>
