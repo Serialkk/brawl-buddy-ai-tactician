@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navigation, Map, BarChart3, Clock, Cpu, Swords, BookOpen } from 'lucide-react';
@@ -17,41 +16,46 @@ const MainNavbar = () => {
         <NavigationMenu>
           <NavigationMenuList className="flex flex-nowrap">
             <NavigationMenuItem>
-              <Link to="/" className={navigationMenuTriggerStyle()}>
+              <Link to="/" className={`${navigationMenuTriggerStyle()} text-brawl-yellow/90 font-lilita`}>
                 Home
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link to="/patch-notes" className={navigationMenuTriggerStyle()}>
+              <Link to="/patch-notes" className={`${navigationMenuTriggerStyle()} text-brawl-yellow/90 font-lilita`}>
                 Patch Notes
               </Link>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
-              <Link to="/maps" className={navigationMenuTriggerStyle()}>
+              <Link to="/maps" className={`${navigationMenuTriggerStyle()} text-brawl-yellow/90 font-lilita`}>
                 <Map className="h-4 w-4 mr-2" />
                 Maps
               </Link>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
-              <Link to="/replay-analysis" className={navigationMenuTriggerStyle()}>
+              <Link to="/replay-analysis" className={`${navigationMenuTriggerStyle()} text-brawl-yellow/90 font-lilita`}>
                 <Clock className="h-4 w-4 mr-2" />
                 Replay Analysis
               </Link>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
-              <Link to="/team-composition" className={navigationMenuTriggerStyle()}>
+              <Link to="/team-composition" className={`${navigationMenuTriggerStyle()} text-brawl-yellow/90 font-lilita`}>
                 <Swords className="h-4 w-4 mr-2" />
                 Team Composition
               </Link>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
-              <Link to="/strategy" className={navigationMenuTriggerStyle()}>
+              <Link to="/strategy" className={`${navigationMenuTriggerStyle()} text-brawl-yellow/90 font-lilita`}>
                 <BookOpen className="h-4 w-4 mr-2" />
                 Strategy Guide
               </Link>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
-              <Link to="/stats" className={navigationMenuTriggerStyle()}>
+              <Link to="/stats" className={`${navigationMenuTriggerStyle()} text-brawl-yellow/90 font-lilita`}>
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Stats
               </Link>

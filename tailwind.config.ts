@@ -153,7 +153,10 @@ export default {
                 'fade-out': 'fade-out 0.3s ease-out',
                 'pulse-glow': 'pulse-glow 2s infinite',
                 'float': 'float 3s ease-in-out infinite'
-			}
+			},
+      fontFamily: {
+        'lilita': ['Lilita One', 'cursive'],
+      },
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
