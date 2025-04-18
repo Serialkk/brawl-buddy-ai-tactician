@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Navigation } from 'lucide-react';
+import { Navigation, Map, BarChart3, Clock, Cpu, Swords, BookOpen } from 'lucide-react';
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -13,9 +13,9 @@ import {
 const MainNavbar = () => {
   return (
     <div className="w-full bg-background/80 backdrop-blur-sm border-b border-border z-40">
-      <div className="container mx-auto flex items-center h-14">
+      <div className="container mx-auto flex items-center h-14 overflow-x-auto">
         <NavigationMenu>
-          <NavigationMenuList>
+          <NavigationMenuList className="flex flex-nowrap">
             <NavigationMenuItem>
               <Link to="/" className={navigationMenuTriggerStyle()}>
                 Home
@@ -27,8 +27,38 @@ const MainNavbar = () => {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <Link to="/maps" className={navigationMenuTriggerStyle()}>
+                <Map className="h-4 w-4 mr-2" />
+                Maps
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/replay-analysis" className={navigationMenuTriggerStyle()}>
+                <Clock className="h-4 w-4 mr-2" />
+                Replay Analysis
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/team-composition" className={navigationMenuTriggerStyle()}>
+                <Swords className="h-4 w-4 mr-2" />
+                Team Composition
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/strategy" className={navigationMenuTriggerStyle()}>
+                <BookOpen className="h-4 w-4 mr-2" />
+                Strategy Guide
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/stats" className={navigationMenuTriggerStyle()}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Stats
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
               <Link to="/profile" className={navigationMenuTriggerStyle()}>
-                Profil
+                Profile
               </Link>
             </NavigationMenuItem>
           </NavigationMenuList>

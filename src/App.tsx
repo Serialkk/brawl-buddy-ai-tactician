@@ -23,6 +23,11 @@ const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Profile = lazy(() => import("./pages/Profile"));
 const PatchNotes = lazy(() => import("./pages/PatchNotes"));
+const ReplayAnalysis = lazy(() => import("./components/ReplayAnalysis"));
+const Maps = lazy(() => import("./components/Maps"));
+const TeamComposition = lazy(() => import("./components/TeamComposition"));
+const StrategyGuide = lazy(() => import("./components/strategy-guide/StrategyGuide"));
+const RealTimeStats = lazy(() => import("./components/RealTimeStats"));
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -71,6 +76,11 @@ const App = () => (
                           <Route path="/profile" element={<Profile />} />
                         </Route>
                         <Route path="/patch-notes" element={<PatchNotes />} />
+                        <Route path="/replay-analysis" element={<ReplayAnalysis />} />
+                        <Route path="/maps" element={<Maps />} />
+                        <Route path="/team-composition" element={<TeamComposition />} />
+                        <Route path="/strategy" element={<StrategyGuide />} />
+                        <Route path="/stats" element={<RealTimeStats />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>
