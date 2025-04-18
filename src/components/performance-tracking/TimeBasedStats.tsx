@@ -50,7 +50,7 @@ export function TimeBasedStats({ data }: TimeBasedStatsProps) {
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="date" />
               <YAxis />
-              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartTooltip content={ChartTooltipContent} />
               <Line
                 type="monotone"
                 dataKey="winRate"
