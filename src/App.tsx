@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -20,6 +19,7 @@ const queryClient = configureQueryClient();
 const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Profile = lazy(() => import("./pages/Profile"));
+const PatchNotes = lazy(() => import("./pages/PatchNotes"));
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -37,6 +37,7 @@ const App = () => (
                     <Route element={<ProtectedRoute />}>
                       <Route path="/profile" element={<Profile />} />
                     </Route>
+                    <Route path="/patch-notes" element={<PatchNotes />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
