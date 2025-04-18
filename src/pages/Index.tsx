@@ -1,67 +1,29 @@
-
-import { useState } from 'react';
-import { lazyLoad } from '@/utils/lazyLoad';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { OptimizedImage } from '@/components/ui/optimized-image';
-
-const Navigation = lazyLoad(() => import('@/components/Navigation'));
-const Dashboard = lazyLoad(() => import('@/components/Dashboard'));
-const TeamComposition = lazyLoad(() => import('@/components/TeamComposition'));
-const RealTimeStats = lazyLoad(() => import('@/components/RealTimeStats'));
-const ReplayAnalysis = lazyLoad(() => import('@/components/ReplayAnalysis'));
-const OpponentPrediction = lazyLoad(() => import('@/components/OpponentPrediction'));
-const AdvancedTeamAnalysis = lazyLoad(() => import('@/components/AdvancedTeamAnalysis'));
-const Maps = lazyLoad(() => import('@/components/Maps'));
-const StrategyGuide = lazyLoad(() => import('@/components/strategy-guide/StrategyGuide'));
-const EventRotation = lazyLoad(() => import('@/components/EventRotation/EventRotation'));
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
-
   return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full">
-        {/* Background and overlay */}
-        <div 
-          className="fixed inset-0 z-0" 
-          style={{
-            backgroundImage: `url('/lovable-uploads/5016b625-cdd3-4908-8393-6a3060a129f5.png')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: 0.85
-          }}
-        />
-        
-        {/* Dark overlay for better contrast */}
-        <div className="fixed inset-0 z-0 bg-black/60" />
-        
-        {/* Main content */}
-        <div className="flex w-full h-screen relative z-10">
-          <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-          <main className="flex-1 overflow-auto p-6">
-            {activeTab === 'dashboard' && <Dashboard />}
-            {activeTab === 'team' && <TeamComposition />}
-            {activeTab === 'maps' && <Maps />}
-            {activeTab === 'strategy' && <StrategyGuide />}
-            {activeTab === 'stats' && <RealTimeStats />}
-            {activeTab === 'replay' && <ReplayAnalysis />}
-            {activeTab === 'opponent' && <OpponentPrediction />}
-            {activeTab === 'events' && <EventRotation />}
-            {activeTab === 'analysis' && <AdvancedTeamAnalysis 
-              selectedBrawlers={[]} 
-              brawlers={[]}
-              synergyData={{
-                overallScore: 0,
-                strengths: [],
-                weaknesses: []
-              }}
-              gameMode="gemGrab"
-            />}
-          </main>
-        </div>
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple">
+        Willkommen zur Brawl Stars Balance Tracker App!
+      </h1>
+      <p className="text-lg text-center text-muted-foreground mb-8">
+        Bleibe immer auf dem Laufenden mit den neuesten Änderungen und Trends in Brawl Stars.
+      </p>
+      
+      {/* Add a prominent link to patch notes */}
+      <div className="mt-6 p-4 bg-gradient-to-r from-brawl-red to-brawl-purple rounded-lg shadow-lg animate-pulse">
+        <Link 
+          to="/patch-notes" 
+          className="flex items-center justify-center gap-2 text-white font-bold p-3 hover:opacity-90 transition-opacity"
+        >
+          <AlertTriangle className="h-5 w-5" />
+          <span>BREAKING NEWS: Rico erhält bedeutende Nerfs! Patch Notes Ansehen</span>
+          <AlertTriangle className="h-5 w-5" />
+        </Link>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
