@@ -180,37 +180,45 @@ export function ReplayAnalysis() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="text-center max-w-2xl mx-auto mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple font-lilita">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple font-lilita animate-fade-in">
           Replay Analysis mit YOLOv8
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground animate-fade-in transition-opacity delay-100">
           Upload your Brawl Stars replays and our AI will analyze your gameplay, identify mistakes, and provide personalized tips.
         </p>
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2 animate-fade-in transition-opacity delay-200">
           Unterstützt Dateien bis zu 1GB Größe.
         </p>
       </div>
       
       {uploadStatus === 'idle' && (
-        <UploadCard onFileSelect={handleFileSelect} />
+        <div className="transition-all duration-300">
+          <UploadCard onFileSelect={handleFileSelect} />
+        </div>
       )}
       
       {(uploadStatus === 'uploading' || uploadStatus === 'analyzing') && (
-        <ProgressCard 
-          uploadStatus={uploadStatus} 
-          progress={progress} 
-          onCancel={handleReset} 
-        />
+        <div className="transition-all duration-300">
+          <ProgressCard 
+            uploadStatus={uploadStatus} 
+            progress={progress} 
+            onCancel={handleReset} 
+          />
+        </div>
       )}
       
       {uploadStatus === 'error' && (
-        <ErrorCard onReset={handleReset} />
+        <div className="transition-all duration-300">
+          <ErrorCard onReset={handleReset} />
+        </div>
       )}
       
       {uploadStatus === 'complete' && replayData && (
-        <ResultsView replayData={replayData} onReset={handleReset} />
+        <div className="transition-all duration-300">
+          <ResultsView replayData={replayData} onReset={handleReset} />
+        </div>
       )}
       
       {/* Hidden video and canvas elements for processing */}

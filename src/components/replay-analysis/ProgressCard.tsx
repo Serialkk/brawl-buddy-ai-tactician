@@ -11,11 +11,11 @@ interface ProgressCardProps {
 
 export function ProgressCard({ uploadStatus, progress, onCancel }: ProgressCardProps) {
   return (
-    <div className="brawl-card p-8 max-w-md mx-auto">
+    <div className="brawl-card p-8 max-w-md mx-auto animate-fade-in">
       <div className="flex flex-col items-center text-center">
-        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
+        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4 animate-float">
           {uploadStatus === 'uploading' ? (
-            <Upload className="h-10 w-10 text-muted-foreground animate-pulse" />
+            <Upload className="h-10 w-10 text-muted-foreground animate-bounce" />
           ) : (
             <Play className="h-10 w-10 text-brawl-blue animate-pulse" />
           )}
@@ -28,8 +28,8 @@ export function ProgressCard({ uploadStatus, progress, onCancel }: ProgressCardP
             ? 'Please wait while we upload your replay...' 
             : 'Our AI is analyzing your gameplay patterns...'}
         </p>
-        <div className="w-full max-w-xs mb-2">
-          <Progress value={uploadStatus === 'uploading' ? progress : 100} className="h-2" />
+        <div className="w-full max-w-xs mb-2 transition-all duration-300">
+          <Progress value={uploadStatus === 'uploading' ? progress : 100} className="h-2 transition-all duration-300" />
         </div>
         <p className="text-sm text-muted-foreground">
           {uploadStatus === 'uploading' ? `${progress}% Complete` : 'Almost done...'}
@@ -38,7 +38,7 @@ export function ProgressCard({ uploadStatus, progress, onCancel }: ProgressCardP
         <Button 
           variant="ghost" 
           onClick={onCancel} 
-          className="mt-4 text-muted-foreground"
+          className="mt-4 text-muted-foreground transition-colors hover:text-destructive"
         >
           <X className="mr-2 h-4 w-4" /> Cancel
         </Button>

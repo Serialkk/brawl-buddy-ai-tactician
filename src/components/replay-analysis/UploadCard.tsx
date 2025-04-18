@@ -54,19 +54,21 @@ export function UploadCard({ onFileSelect }: UploadCardProps) {
 
   return (
     <div 
-      className="brawl-card p-8 max-w-md mx-auto border-2 border-dashed border-muted rounded-lg transition-all hover:border-brawl-blue"
+      className="brawl-card p-8 max-w-md mx-auto border-2 border-dashed border-muted rounded-lg 
+        transition-all duration-300 hover:border-brawl-blue hover:scale-[1.01] hover:shadow-lg
+        animate-fade-in"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
       <div className="flex flex-col items-center text-center">
-        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
+        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4 animate-float">
           <Upload className="h-10 w-10 text-muted-foreground" />
         </div>
         <h3 className="text-xl font-bold mb-2 font-lilita">Upload Replay</h3>
         <p className="text-muted-foreground mb-2">
           Drag and drop your replay file or click to browse
         </p>
-        <p className="text-sm text-brawl-blue mb-6">
+        <p className="text-sm text-brawl-blue mb-6 animate-pulse">
           <EyeIcon className="inline h-4 w-4 mr-1" /> YOLOv8 Objekt-Erkennung aktiviert
         </p>
         <input
@@ -78,7 +80,7 @@ export function UploadCard({ onFileSelect }: UploadCardProps) {
         />
         <Button 
           onClick={() => fileInputRef.current?.click()} 
-          className="brawl-button brawl-button-primary"
+          className="brawl-button brawl-button-primary transition-transform hover:scale-105"
         >
           <Upload className="mr-2 h-4 w-4" /> Select Replay
         </Button>
