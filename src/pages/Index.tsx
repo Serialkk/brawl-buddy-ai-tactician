@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import { GradientText } from '@/components/ui/brawl-classes';
+import { ChatArea } from '@/components/chat/ChatArea';
 
 const Index = () => {
   return (
@@ -32,6 +33,9 @@ const Index = () => {
           <AlertTriangle className="h-5 w-5" />
         </Link>
       </div>
+      
+      {/* Chat Area */}
+      <ChatArea />
     </div>
   );
 };
