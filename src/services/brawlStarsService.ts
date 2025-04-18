@@ -1,4 +1,3 @@
-
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlers } from '@/data/brawlers';
 
@@ -110,7 +109,7 @@ export const fetchMaps = async (): Promise<any[]> => {
     
     // Cache the response
     localStorage.setItem('brawl-maps-cache', JSON.stringify({
-      data: data.list || [],
+      data,
       timestamp: Date.now(),
     }));
     
