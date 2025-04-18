@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -68,7 +67,7 @@ const App = () => (
                           </div>
                         </div>
                         
-                        <Bell className="h-5 w-5 text-brawl-yellow hidden md:block" />
+                        <Bell className="h-5 w-4 text-brawl-yellow hidden md:block" />
                       </div>
                     </div>
                   </div>
