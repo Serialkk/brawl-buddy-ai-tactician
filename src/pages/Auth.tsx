@@ -57,8 +57,22 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
+      {/* Hintergrundbild */}
+      <div 
+        className="fixed inset-0 z-0" 
+        style={{
+          backgroundImage: `url('/lovable-uploads/5016b625-cdd3-4908-8393-6a3060a129f5.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      
+      {/* Dunkle Überlagerung für besseren Kontrast */}
+      <div className="fixed inset-0 z-0 bg-black/70" />
+      
+      <Card className="w-full max-w-md relative z-10 bg-black/50 backdrop-blur-md border-brawl-purple/30">
         <CardHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-brawl-blue to-brawl-purple flex items-center justify-center text-white text-xl font-bold">
             BB
@@ -67,7 +81,7 @@ const Auth = () => {
             <span className="text-brawl-blue">Brawl</span>
             <span className="text-brawl-purple">Buddy</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-white/80">
             {isLogin
               ? "Log in to access your BrawlBuddy account"
               : "Create a new BrawlBuddy account"}
@@ -78,15 +92,15 @@ const Auth = () => {
           <CardContent className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username" className="text-white">Username</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-white/70" />
                   <Input
                     id="username"
                     placeholder="Enter your username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 bg-white/10 border-white/20 text-white"
                     required
                   />
                 </div>
@@ -94,32 +108,32 @@ const Auth = () => {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-white">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-white/70" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white/10 border-white/20 text-white"
                   required
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-white">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-white/70" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white/10 border-white/20 text-white"
                   required
                   minLength={6}
                 />
@@ -143,7 +157,7 @@ const Auth = () => {
             <Button
               type="button"
               variant="ghost"
-              className="w-full"
+              className="w-full text-white hover:bg-white/10"
               onClick={() => setIsLogin(!isLogin)}
             >
               {isLogin
