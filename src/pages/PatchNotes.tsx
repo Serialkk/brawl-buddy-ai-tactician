@@ -37,13 +37,30 @@ const mockPatchNote = {
 
 const PatchNotes = () => {
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple">
-        Patch Notes Zusammenfassung
-      </h1>
-      <PatchNoteSummary patchNote={mockPatchNote} />
-    </div>
+    <>
+      {/* Fixed Banner */}
+      <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-brawl-blue via-brawl-purple to-brawl-blue p-3 text-white shadow-lg z-50">
+        <div className="container mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="font-bold">Patch {mockPatchNote.version}</span>
+            <span className="text-sm opacity-75">{mockPatchNote.date}</span>
+          </div>
+          <div className="hidden md:block">
+            <p className="text-sm">{mockPatchNote.highlights[0]}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content with padding to account for fixed banner */}
+      <div className="container mx-auto p-6 max-w-4xl mt-16">
+        <h1 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-brawl-blue to-brawl-purple">
+          Patch Notes Zusammenfassung
+        </h1>
+        <PatchNoteSummary patchNote={mockPatchNote} />
+      </div>
+    </>
   );
 };
 
 export default PatchNotes;
+
