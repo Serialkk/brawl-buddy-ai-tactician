@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { lazyLoad } from '@/utils/lazyLoad';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -13,6 +12,7 @@ const OpponentPrediction = lazyLoad(() => import('@/components/OpponentPredictio
 const AdvancedTeamAnalysis = lazyLoad(() => import('@/components/AdvancedTeamAnalysis'));
 const Maps = lazyLoad(() => import('@/components/Maps'));
 const StrategyGuide = lazyLoad(() => import('@/components/strategy-guide/StrategyGuide'));
+const EventRotation = lazyLoad(() => import('@/components/EventRotation/EventRotation'));
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -20,7 +20,7 @@ const Index = () => {
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
-        {/* Hintergrundbild als separates Element mit voller Abdeckung */}
+        {/* Background and overlay */}
         <div 
           className="fixed inset-0 z-0" 
           style={{
@@ -35,7 +35,7 @@ const Index = () => {
         {/* Dunkle Überlagerung für besseren Kontrast */}
         <div className="fixed inset-0 z-0 bg-black/60" />
         
-        {/* Hauptinhalt */}
+        {/* Main content */}
         <div className="flex w-full h-screen relative z-10">
           <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
           <main className="flex-1 overflow-auto p-6">
@@ -46,6 +46,7 @@ const Index = () => {
             {activeTab === 'stats' && <RealTimeStats />}
             {activeTab === 'replay' && <ReplayAnalysis />}
             {activeTab === 'opponent' && <OpponentPrediction />}
+            {activeTab === 'events' && <EventRotation />}
             {activeTab === 'analysis' && <AdvancedTeamAnalysis 
               selectedBrawlers={[]} 
               brawlers={[]}

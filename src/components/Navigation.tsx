@@ -1,58 +1,138 @@
-
 import React from 'react';
-import { Sidebar } from '@/components/ui/sidebar';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Trophy, Users, Map, ChevronRight, BarChart, PlayCircle, Brain, Layout, Info } from 'lucide-react';
-import { ProfileMenu } from './ProfileMenu';
-import { LanguageToggle } from './LanguageToggle';
+import { Button } from '@/components/ui/button';
+import { LayoutDashboard, Calendar, Users, Map, BarChart, Clock, Search, Brain } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useNavigate } from 'react-router-dom';
 
 interface NavigationProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
-  const isMobile = useIsMobile();
-  
-  const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: <Layout className="w-5 h-5" /> },
-    { id: 'team', label: 'Team Builder', icon: <Users className="w-5 h-5" /> },
-    { id: 'maps', label: 'Maps', icon: <Map className="w-5 h-5" /> },
-    { id: 'strategy', label: 'Strategy Guide', icon: <Info className="w-5 h-5" /> },
-    { id: 'stats', label: 'Statistics', icon: <BarChart className="w-5 h-5" /> },
-    { id: 'replay', label: 'Replay Analysis', icon: <PlayCircle className="w-5 h-5" /> },
-    { id: 'opponent', label: 'Counter Picks', icon: <Brain className="w-5 h-5" /> },
-  ];
+const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
-    <Sidebar className="flex flex-col border-r border-r-border">
-      <div className="p-4 flex items-center gap-2">
-        <Trophy className="h-6 w-6 text-brawl-blue" />
-        <h1 className="text-xl font-semibold">Brawl Buddy</h1>
-      </div>
-      
-      <div className="flex-1 overflow-auto py-2">
-        {navigationItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setActiveTab(item.id)}
-            className={`
-              w-full flex items-center gap-3 px-4 py-2 text-left transition-colors
-              ${activeTab === item.id ? 'text-brawl-blue bg-muted' : 'text-muted-foreground hover:bg-muted/50'}
-            `}
+    <nav className="w-64 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-r">
+      <div className="flex flex-col h-full">
+        <div className="p-6">
+          <h1 className="text-2xl font-bold text-primary">Brawl Stats</h1>
+        </div>
+        
+        <div className="flex-1 px-3">
+          <Button
+            variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('dashboard')}
           >
-            {item.icon}
-            <span className={`${isMobile ? 'hidden' : 'block'}`}>{item.label}</span>
-            {activeTab === item.id && <ChevronRight className="w-4 h-4 ml-auto" />}
-          </button>
-        ))}
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            Dashboard
+          </Button>
+          
+          <Button
+            variant={activeTab === 'events' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('events')}
+          >
+            <Calendar className="mr-2 h-4 w-4" />
+            Events
+          </Button>
+
+          <Button
+            variant={activeTab === 'team' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('team')}
+          >
+            <Users className="mr-2 h-4 w-4" />
+            Team Composition
+          </Button>
+
+          <Button
+            variant={activeTab === 'maps' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('maps')}
+          >
+            <Map className="mr-2 h-4 w-4" />
+            Maps
+          </Button>
+
+          <Button
+            variant={activeTab === 'strategy' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('strategy')}
+          >
+            <Brain className="mr-2 h-4 w-4" />
+            Strategy Guide
+          </Button>
+
+          <Button
+            variant={activeTab === 'stats' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('stats')}
+          >
+            <BarChart className="mr-2 h-4 w-4" />
+            Real Time Stats
+          </Button>
+
+          <Button
+            variant={activeTab === 'replay' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('replay')}
+          >
+            <Clock className="mr-2 h-4 w-4" />
+            Replay Analysis
+          </Button>
+
+          <Button
+            variant={activeTab === 'opponent' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('opponent')}
+          >
+            <Search className="mr-2 h-4 w-4" />
+            Opponent Prediction
+          </Button>
+
+          <Button
+            variant={activeTab === 'analysis' ? 'secondary' : 'ghost'}
+            className="w-full justify-start mb-2"
+            onClick={() => setActiveTab('analysis')}
+          >
+            <BarChart className="mr-2 h-4 w-4" />
+            Advanced Team Analysis
+          </Button>
+        </div>
+        
+        <div className="p-6">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="gap-2 w-full justify-start">
+                <Avatar className="w-6 h-6">
+                  <AvatarImage src={user?.image} />
+                  <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span>{user?.name}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
-      
-      <div className="p-4 border-t border-border flex items-center justify-between">
-        <LanguageToggle />
-        <ProfileMenu />
-      </div>
-    </Sidebar>
+    </nav>
   );
 };
 
