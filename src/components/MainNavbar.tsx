@@ -9,7 +9,6 @@ const MainNavbar = () => {
   const location = useLocation();
   const { user } = useAuth();
   
-  // Funktion, um zu prüfen, ob ein Link aktiv ist
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -23,8 +22,15 @@ const MainNavbar = () => {
         </div>
         
         {/* Zentraler Bereich - Hauptnavigation */}
-        <div className="hidden md:flex mx-auto">
-          <div className="bg-black/40 backdrop-blur-sm rounded-full border border-brawl-purple/30">
+        <div className="hidden md:flex mx-auto relative">
+          <div className="bg-black/40 backdrop-blur-sm rounded-full border border-brawl-purple/30 relative">
+            {/* Replay Titel */}
+            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
+              <span className="bg-brawl-purple/80 text-white px-3 py-1 rounded-full text-sm font-bold">
+                Replay
+              </span>
+            </div>
+            
             <nav className="flex">
               <Link to="/maps" className={`px-4 py-2 flex items-center gap-1.5 font-medium transition-colors ${isActive('/maps') ? 'text-brawl-yellow' : 'text-white/80 hover:text-white'}`}>
                 <Map className="h-4 w-4" />
