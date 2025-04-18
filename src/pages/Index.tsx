@@ -4,8 +4,12 @@ import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import { GradientText } from '@/components/ui/brawl-classes';
 import { ChatArea } from '@/components/chat/ChatArea';
+import { LoginBox } from '@/components/auth/LoginBox';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
+  const { user } = useAuth();
+
   return (
     <div className="container mx-auto p-6">
       <div className="bg-black/50 rounded-lg p-4 mb-6">
@@ -21,8 +25,15 @@ const Index = () => {
       <p className="text-lg text-center text-white/90 mb-8">
         Bleibe immer auf dem Laufenden mit den neuesten Änderungen und Trends in Brawl Stars.
       </p>
+
+      {/* Show login box only if user is not authenticated */}
+      {!user && (
+        <div className="mb-8">
+          <LoginBox />
+        </div>
+      )}
       
-      {/* Add a prominent link to patch notes */}
+      {/* Breaking news banner */}
       <div className="mt-6 p-4 bg-gradient-to-r from-brawl-red to-brawl-purple rounded-lg shadow-lg animate-pulse">
         <Link 
           to="/patch-notes" 
