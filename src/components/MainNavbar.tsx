@@ -12,7 +12,7 @@ import {
 
 const MainNavbar = () => {
   return (
-    <div className="w-full bg-background/80 backdrop-blur-sm border-b border-border sticky top-12 z-40">
+    <div className="w-full bg-background/80 backdrop-blur-sm border-b border-border z-40">
       <div className="container mx-auto flex items-center h-14">
         <NavigationMenu>
           <NavigationMenuList>

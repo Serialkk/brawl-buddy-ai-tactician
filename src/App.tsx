@@ -34,7 +34,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                {/* Global Breaking News Banner - fixed position, smaller height */}
+                {/* Global Breaking News Banner - fixed position at the top */}
                 <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-brawl-red via-brawl-purple to-brawl-blue p-2 text-white shadow-lg z-50">
                   <div className="container mx-auto">
                     <div className="flex flex-col md:flex-row items-center justify-between">
@@ -55,21 +55,26 @@ const App = () => (
                   </div>
                 </div>
 
-                {/* Navigation bar positioned below the banner */}
-                <MainNavbar />
+                {/* Layout structure */}
+                <div className="flex flex-col min-h-screen">
+                  {/* Navigation bar positioned below the banner with correct spacing */}
+                  <div className="mt-12">
+                    <MainNavbar />
+                  </div>
 
-                {/* Main content with padding to account for fixed banner and navbar */}
-                <div className="pt-16">
-                  <Suspense fallback={<DefaultLoadingComponent />}>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route element={<ProtectedRoute />}>
-                        <Route path="/profile" element={<Profile />} />
-                      </Route>
-                      <Route path="/patch-notes" element={<PatchNotes />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
+                  {/* Main content with padding to account for fixed banner and navbar */}
+                  <main className="flex-grow container mx-auto p-6 mt-12">
+                    <Suspense fallback={<DefaultLoadingComponent />}>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route element={<ProtectedRoute />}>
+                          <Route path="/profile" element={<Profile />} />
+                        </Route>
+                        <Route path="/patch-notes" element={<PatchNotes />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Suspense>
+                  </main>
                 </div>
               </BrowserRouter>
             </TooltipProvider>
