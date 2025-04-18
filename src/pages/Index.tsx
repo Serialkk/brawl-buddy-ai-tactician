@@ -7,13 +7,15 @@ import { GradientText } from '@/components/ui/brawl-classes';
 const Index = () => {
   return (
     <div className="container mx-auto p-6">
-      <GradientText 
-        from="from-white" 
-        to="to-brawl-yellow" 
-        className="text-3xl font-bold mb-6 text-center"
-      >
-        Willkommen zur Brawl Stars Balance Tracker App!
-      </GradientText>
+      <div className="bg-black/50 rounded-lg p-4 mb-6">
+        <GradientText 
+          from="from-white" 
+          to="to-brawl-yellow" 
+          className="text-3xl font-bold text-center block"
+        >
+          Willkommen zur Brawl Stars Balance Tracker App!
+        </GradientText>
+      </div>
       
       <p className="text-lg text-center text-white/90 mb-8">
         Bleibe immer auf dem Laufenden mit den neuesten Änderungen und Trends in Brawl Stars.
