@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -72,32 +73,27 @@ const App = () => (
                     </div>
                   </div>
 
-                  {/* Layout structure */}
-                  <div className="flex flex-col min-h-screen">
-                    {/* Navigation bar positioned below the banner */}
-                    <div className="mt-12">
-                      <MainNavbar />
-                    </div>
+                  {/* Navigation bar */}
+                  <MainNavbar />
 
-                    {/* Main content */}
-                    <main className="flex-grow container mx-auto p-6 mt-12">
-                      <Suspense fallback={<DefaultLoadingComponent />}>
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route element={<ProtectedRoute />}>
-                            <Route path="/profile" element={<Profile />} />
-                          </Route>
-                          <Route path="/patch-notes" element={<PatchNotes />} />
-                          <Route path="/replay-analysis" element={<ReplayAnalysis />} />
-                          <Route path="/maps" element={<Maps />} />
-                          <Route path="/team-composition" element={<TeamComposition />} />
-                          <Route path="/strategy" element={<StrategyGuide />} />
-                          <Route path="/stats" element={<RealTimeStats />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Suspense>
-                    </main>
-                  </div>
+                  {/* Main content with adjusted top margin to account for fixed navigation */}
+                  <main className="container mx-auto p-6 pt-32">
+                    <Suspense fallback={<DefaultLoadingComponent />}>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route element={<ProtectedRoute />}>
+                          <Route path="/profile" element={<Profile />} />
+                        </Route>
+                        <Route path="/patch-notes" element={<PatchNotes />} />
+                        <Route path="/replay-analysis" element={<ReplayAnalysis />} />
+                        <Route path="/maps" element={<Maps />} />
+                        <Route path="/team-composition" element={<TeamComposition />} />
+                        <Route path="/strategy" element={<StrategyGuide />} />
+                        <Route path="/stats" element={<RealTimeStats />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Suspense>
+                  </main>
                 </div>
               </BrowserRouter>
             </TooltipProvider>
