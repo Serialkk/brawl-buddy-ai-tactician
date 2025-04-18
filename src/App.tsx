@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,6 +12,7 @@ import { GameDataProvider } from "@/contexts/GameDataContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { configureQueryClient } from "@/utils/apiUtils";
 import { DefaultLoadingComponent } from "@/utils/lazyLoad";
+import { AlertTriangle, Bell } from "lucide-react";
 
 // Configure query client
 const queryClient = configureQueryClient();
@@ -31,16 +33,40 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <Suspense fallback={<DefaultLoadingComponent />}>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route element={<ProtectedRoute />}>
-                      <Route path="/profile" element={<Profile />} />
-                    </Route>
-                    <Route path="/patch-notes" element={<PatchNotes />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
+                {/* Global Breaking News Banner */}
+                <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-brawl-red via-brawl-purple to-brawl-blue p-4 text-white shadow-lg z-50">
+                  <div className="container mx-auto">
+                    <div className="flex flex-col md:flex-row items-center justify-between">
+                      <div className="flex items-center gap-3 mb-2 md:mb-0">
+                        <AlertTriangle className="h-5 w-5 text-brawl-yellow animate-pulse" />
+                        <span className="font-bold text-lg">Patch 61.0</span>
+                        <span className="text-sm bg-black/30 px-2 py-1 rounded">18. April 2025</span>
+                      </div>
+                      
+                      <div className="flex-1 max-w-2xl mx-4 overflow-hidden">
+                        <div className="whitespace-nowrap animate-[marquee_15s_linear_infinite]">
+                          <span className="text-brawl-yellow font-bold">BREAKING NEWS:</span> Rico erhält bedeutende Nerfs - Reichweite und Schaden der Standardattacke um 10% reduziert!
+                        </div>
+                      </div>
+                      
+                      <Bell className="h-5 w-5 text-brawl-yellow hidden md:block" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main content with padding to account for fixed banner */}
+                <div className="pt-24">
+                  <Suspense fallback={<DefaultLoadingComponent />}>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route element={<ProtectedRoute />}>
+                        <Route path="/profile" element={<Profile />} />
+                      </Route>
+                      <Route path="/patch-notes" element={<PatchNotes />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </div>
               </BrowserRouter>
             </TooltipProvider>
           </LanguageProvider>
