@@ -2,9 +2,10 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PatchNoteSummary } from "@/components/patch-notes/PatchNoteSummary";
-import { fetchLatestPatchNotes } from "@/services/patchNotesService";
-import { Bell, AlertTriangle } from "lucide-react";
+import { fetchLatestPatchNotes, handlePatchNotesError } from "@/services/patchNotesService";
+import { Bell, AlertTriangle, RefreshCcw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 // Fallback mock data in case API fails
 const mockPatchNote = {
@@ -46,10 +47,18 @@ const mockPatchNote = {
 };
 
 const PatchNotes = () => {
-  const { data: patchNote, isLoading, error } = useQuery({
+  const { 
+    data: patchNote, 
+    isLoading, 
+    error, 
+    refetch,
+    isRefetching
+  } = useQuery({
     queryKey: ['patchNotes'],
     queryFn: fetchLatestPatchNotes,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    retry: 2, // Retry twice before failing
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
   });
 
   const transformedPatchNote = React.useMemo(() => {
@@ -66,6 +75,15 @@ const PatchNotes = () => {
       }))
     };
   }, [patchNote]);
+
+  // Handle manual refresh with feedback
+  const handleRefresh = async () => {
+    try {
+      await refetch();
+    } catch (refreshError) {
+      handlePatchNotesError(refreshError);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -84,12 +102,23 @@ const PatchNotes = () => {
         <h1 className="text-3xl font-bold text-center font-lilita text-brawl-yellow/90">
           Patch Notes Zusammenfassung
         </h1>
-        {error && (
-          <div className="flex items-center text-amber-400 gap-1">
-            <AlertTriangle className="h-5 w-5" />
-            <span className="text-sm">Offline Modus</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {error && (
+            <div className="flex items-center text-amber-400 gap-1">
+              <AlertTriangle className="h-5 w-5" />
+              <span className="text-sm">Offline Modus</span>
+            </div>
+          )}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleRefresh} 
+            disabled={isRefetching}
+            className="h-8 w-8"
+          >
+            <RefreshCcw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
       </div>
       
       {error && (
@@ -99,12 +128,24 @@ const PatchNotes = () => {
             <h3 className="font-medium text-amber-400 mb-1">API Verbindungsfehler</h3>
             <p className="text-sm text-muted-foreground">
               Die aktuellen Patch Notes konnten nicht geladen werden. Es werden die zuletzt bekannten Änderungen angezeigt.
+              <Button 
+                variant="link" 
+                className="text-amber-400 p-0 h-auto font-medium" 
+                onClick={handleRefresh}
+                disabled={isRefetching}
+              >
+                Erneut versuchen {isRefetching && <RefreshCcw className="ml-1 h-3 w-3 animate-spin inline" />}
+              </Button>
             </p>
           </div>
         </div>
       )}
       
       <PatchNoteSummary patchNote={transformedPatchNote} />
+
+      <div className="mt-4 text-xs text-muted-foreground text-center">
+        <p>Datenquellen: Brawlify API, Brawl API Info</p>
+      </div>
     </div>
   );
 };
