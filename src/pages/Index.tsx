@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { lazyLoad } from '@/utils/lazyLoad';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 const Navigation = lazyLoad(() => import('@/components/Navigation'));
 const Dashboard = lazyLoad(() => import('@/components/Dashboard'));
@@ -18,9 +19,17 @@ const Index = () => {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
+      <div 
+        className="flex h-screen w-full bg-cover bg-center bg-no-repeat relative" 
+        style={{
+          backgroundImage: `url('/lovable-uploads/5016b625-cdd3-4908-8393-6a3060a129f5.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
         <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-6 relative z-10">
           {activeTab === 'dashboard' && <Dashboard />}
           {activeTab === 'team' && <TeamComposition />}
           {activeTab === 'maps' && <Maps />}
