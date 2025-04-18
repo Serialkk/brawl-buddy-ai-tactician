@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,6 +12,9 @@ import { GameDataProvider } from "@/contexts/GameDataContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { configureQueryClient } from "@/utils/apiUtils";
 import { DefaultLoadingComponent } from "@/utils/lazyLoad";
+
+// Configure query client
+const queryClient = configureQueryClient();
 
 // Lazy loaded pages
 const Index = lazy(() => import("./pages/Index"));
