@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard, Calendar, Users, Map, BarChart, Clock, Search, Brain } from 'lucide-react';
@@ -21,6 +22,13 @@ interface NavigationProps {
 const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Extract user's email and get the first letter for avatar fallback
+  const userEmail = user?.email || '';
+  const userInitial = userEmail ? userEmail[0].toUpperCase() : '?';
+
+  // Get user's name from user_metadata if available
+  const userName = user?.user_metadata?.username || userEmail || 'User';
 
   return (
     <nav className="w-64 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-r">
@@ -117,10 +125,10 @@ const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="gap-2 w-full justify-start">
                 <Avatar className="w-6 h-6">
-                  <AvatarImage src={user?.image} />
-                  <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarImage src={user?.user_metadata?.avatar_url} />
+                  <AvatarFallback>{userInitial}</AvatarFallback>
                 </Avatar>
-                <span>{user?.name}</span>
+                <span>{userName}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
