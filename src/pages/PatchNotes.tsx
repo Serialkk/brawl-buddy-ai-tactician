@@ -2,6 +2,7 @@
 import React from "react";
 import { PatchNoteSummary } from "@/components/patch-notes/PatchNoteSummary";
 
+// Define the mockPatchNote with proper typing for the 'type' property
 const mockPatchNote = {
   version: "61.0",
   date: "18. April 2025",
@@ -13,22 +14,22 @@ const mockPatchNote = {
   changes: [
     {
       brawler: "Shelly",
-      type: "buff",
+      type: "buff" as const,  // Using 'as const' to tell TypeScript this is a literal type
       description: "Basis-Schaden erhöht von 420 auf 460, Super lädt sich 10% schneller auf"
     },
     {
       brawler: "Brock",
-      type: "nerf",
+      type: "nerf" as const,
       description: "Schaden pro Rakete reduziert von 1600 auf 1520"
     },
     {
       brawler: "El Primo",
-      type: "rework",
+      type: "rework" as const,
       description: "Neue Passiv-Fähigkeit: Gewährt nahegelegenen Verbündeten einen kleinen Geschwindigkeitsboost"
     },
     {
       brawler: "Colt",
-      type: "nerf",
+      type: "nerf" as const,
       description: "Aufladerate seiner Super um 15% reduziert"
     }
   ]
