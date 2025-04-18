@@ -31,33 +31,11 @@ export function OptimizedImage({
     setIsLoaded(false);
     setHasError(false);
     setImgSrc(src as string);
-    
-    // Only perform preloading check for remote URLs
-    if (typeof src === 'string' && !src.startsWith('/')) {
-      const img = new Image();
-      img.src = src;
-      
-      img.onload = () => {
-        setIsLoaded(true);
-        setHasError(false);
-      };
-      
-      img.onerror = () => {
-        console.warn(`Failed to load image: ${src}`);
-        setImgSrc(fallback);
-        setHasError(true);
-      };
-
-      return () => {
-        img.onload = null;
-        img.onerror = null;
-      };
-    }
   }, [src, fallback]);
 
   // Handle image load errors
   const handleImageError = (e: SyntheticEvent<HTMLImageElement, Event>) => {
-    console.log(`Error loading image: ${imgSrc}`);
+    console.warn(`Error loading image: ${imgSrc}`);
     setHasError(true);
     setImgSrc(fallback);
     

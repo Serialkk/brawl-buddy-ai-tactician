@@ -46,17 +46,9 @@ export const BrawlerCard = ({
         : "bg-brawl-red"
     : "";
     
-  // Always use a consistent image URL format
-  const getBrawlerImageUrl = () => {
-    if (imageError) return '/placeholder.svg';
-    
-    // If image is already a valid path, use it
-    if (image && image.startsWith('/')) {
-      return image;
-    }
-    
-    // Fallback auf lokale Bilder
-    return `/brawlers/${name.toLowerCase().replace(/\s+/g, '-')}.png`;
+  // Use initial as fallback when no image is available
+  const getBrawlerInitial = () => {
+    return name.charAt(0).toUpperCase();
   };
   
   return (
@@ -77,13 +69,19 @@ export const BrawlerCard = ({
         <div className="absolute inset-0 bg-gradient-to-br from-brawl-blue/10 to-brawl-purple/20 z-10" />
         
         <div className="absolute inset-0 flex items-center justify-center">
-          <OptimizedImage 
-            src={getBrawlerImageUrl()}
-            fallback="/placeholder.svg"
-            alt={name}
-            className="object-contain h-full w-full p-2"
-            onError={() => setImageError(true)}
-          />
+          {imageError ? (
+            <div className="w-full h-full flex items-center justify-center bg-muted">
+              <span className="text-3xl font-bold text-foreground/70">{getBrawlerInitial()}</span>
+            </div>
+          ) : (
+            <OptimizedImage 
+              src={image || `/brawlers/${name.toLowerCase().replace(/\s+/g, '-')}.png`}
+              fallback={`data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="50%" y="50%" font-size="40" text-anchor="middle" dy=".3em" fill="currentColor">${getBrawlerInitial()}</text></svg>`}
+              alt={name}
+              className="object-contain h-full w-full p-2"
+              onError={() => setImageError(true)}
+            />
+          )}
         </div>
         
         {selected && (

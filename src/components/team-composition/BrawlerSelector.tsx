@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { BrawlerCard } from "./BrawlerCard";
 import { Brawler } from "@/data/types/brawler";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface BrawlerSelectorProps {
   brawlers: Brawler[];
@@ -33,7 +33,7 @@ export const BrawlerSelector = ({
   const [roleFilter, setRoleFilter] = useState("all");
   const [rarityFilter, setRarityFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode<"grid" | "list">("grid");
 
   const rarities = useMemo(() => {
     return Array.from(new Set(brawlers.map(b => b.rarity)));
@@ -254,19 +254,12 @@ export const BrawlerSelector = ({
                         <td className="p-2 font-medium">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                              {brawler.image ? (
-                                <img 
-                                  src={brawler.image} 
-                                  alt={brawler.name}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    // Set default if image fails to load
-                                    (e.target as HTMLImageElement).src = '/placeholder.svg';
-                                  }}
-                                />
-                              ) : (
-                                <span>{brawler.name.charAt(0)}</span>
-                              )}
+                              <OptimizedImage 
+                                src={brawler.image} 
+                                alt={brawler.name}
+                                className="w-full h-full object-cover"
+                                fallback={`data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text x="50%" y="50%" font-size="16" text-anchor="middle" dy=".3em" fill="currentColor">${brawler.name.charAt(0)}</text></svg>`}
+                              />
                             </div>
                             {brawler.name}
                           </div>
