@@ -1,3 +1,13 @@
+interface DetectionBox {
+  box: {
+    xmin: number;
+    ymin: number;
+    xmax: number;
+    ymax: number;
+  };
+  label: string;
+  score: number;
+}
 
 interface AnalysisResult {
   brawlerUsed: string;
@@ -11,6 +21,7 @@ interface AnalysisResult {
   strengths: string[];
   weaknesses: string[];
   timestamp: string;
+  detectedObjects?: DetectionBox[]; // Added the missing property
 }
 
 // Collection of possible strengths for different brawlers and game modes
