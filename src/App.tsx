@@ -33,8 +33,8 @@ const App = () => (
               <BrowserRouter>
                 <Suspense fallback={<DefaultLoadingComponent />}>
                   <Routes>
+                    <Route path="/" element={<Index />} />
                     <Route element={<ProtectedRoute />}>
-                      <Route path="/" element={<Index />} />
                       <Route path="/profile" element={<Profile />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />

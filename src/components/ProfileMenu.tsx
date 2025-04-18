@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export function ProfileMenu() {
   const { user, signOut } = useAuth();
@@ -21,6 +22,23 @@ export function ProfileMenu() {
       toast.error(error.message || "Error signing out");
     }
   };
+  
+  const handleSignIn = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: 'demo@brawlbuddy.app',
+        password: 'demo123',
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Logged in successfully!');
+    } catch (error: any) {
+      toast.error(error.message || 'Error signing in');
+    }
+  };
 
   const getInitials = () => {
     if (user?.user_metadata?.username) {
@@ -31,7 +49,7 @@ export function ProfileMenu() {
   
   if (!user) {
     return (
-      <Button variant="outline" onClick={() => navigate("/auth")}>
+      <Button variant="outline" onClick={handleSignIn}>
         <User className="mr-2 h-4 w-4" />
         Log In
       </Button>

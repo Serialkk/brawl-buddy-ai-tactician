@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { lazyLoad } from '@/utils/lazyLoad';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -32,7 +33,7 @@ const Index = () => {
           }}
         />
         
-        {/* Dunkle Überlagerung für besseren Kontrast */}
+        {/* Dark overlay for better contrast */}
         <div className="fixed inset-0 z-0 bg-black/60" />
         
         {/* Main content */}

@@ -38,6 +38,7 @@ const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
       
       toast.success('Logged in successfully!');
     } catch (error: any) {
+      console.error("Login error:", error);
       toast.error(error.message || 'Error signing in');
     }
   };
@@ -148,7 +149,7 @@ const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                     <AvatarImage src={user?.user_metadata?.avatar_url} />
                     <AvatarFallback>{userInitial}</AvatarFallback>
                   </Avatar>
-                  <span>{userName}</span>
+                  <span className="truncate">{userName}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
