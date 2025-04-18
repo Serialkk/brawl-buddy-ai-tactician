@@ -24,9 +24,9 @@ const MainNavbar = () => {
         {/* Zentraler Bereich - Hauptnavigation */}
         <div className="hidden md:flex mx-auto relative">
           <div className="bg-black/40 backdrop-blur-sm rounded-full border border-brawl-purple/30 relative">
-            {/* Replay Titel */}
-            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-              <span className="bg-brawl-purple/80 text-white px-3 py-1 rounded-full text-sm font-bold">
+            {/* Replay Titel - Adjusted positioning */}
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <span className="bg-brawl-purple/80 text-white px-3 py-1 rounded-full text-xs font-bold">
                 Replay
               </span>
             </div>
