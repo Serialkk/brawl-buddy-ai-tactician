@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 interface TimeBasedStatsProps {
   data: Array<{
@@ -50,7 +50,7 @@ export function TimeBasedStats({ data }: TimeBasedStatsProps) {
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="date" />
               <YAxis />
-              <ChartTooltip />
+              <ChartTooltip content={<ChartTooltipContent />} />
               <Line
                 type="monotone"
                 dataKey="winRate"

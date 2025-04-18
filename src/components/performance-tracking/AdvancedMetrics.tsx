@@ -63,14 +63,14 @@ export function AdvancedMetrics({ metrics }: AdvancedMetricsProps) {
               />
             </RadarChart>
           </ResponsiveContainer>
-          <ChartLegend content={<ChartLegendContent />} />
+          <ChartLegend content={ChartLegendContent} />
         </ChartContainer>
       </CardContent>
     </Card>
   );
 }
 
-const ChartLegendContent = () => (
+const ChartLegendContent = ({ payload }: { payload?: any[] }) => (
   <div className="flex justify-center gap-4 py-2">
     <div className="flex items-center gap-2">
       <div className="h-3 w-3 rounded-full bg-[var(--color-playerStats)]" />
