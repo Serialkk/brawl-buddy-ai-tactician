@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchBrawlers, fetchMaps } from '@/services/brawlStarsService';
+import { fetchBrawlers, fetchMaps, fetchEvents, fetchLeaderboards } from '@/services/brawlStarsService';
 import { handleApiError } from '@/utils/apiUtils';
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlersFallback } from '@/data/brawlers';
@@ -9,10 +10,16 @@ import { toast } from 'sonner';
 interface GameDataContextType {
   brawlers: Brawler[];
   maps: any[];
+  events: any[];
+  leaderboard: any[];
   isLoadingBrawlers: boolean;
   isLoadingMaps: boolean;
+  isLoadingEvents: boolean;
+  isLoadingLeaderboard: boolean;
   refetchBrawlers: () => void;
   refetchMaps: () => void;
+  refetchEvents: () => void;
+  refetchLeaderboard: () => void;
 }
 
 const GameDataContext = createContext<GameDataContextType | undefined>(undefined);
@@ -102,11 +109,41 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
   } = useQuery({
     queryKey: ['maps'],
     queryFn: fetchMaps,
-    staleTime: 5 * 60 * 1000, // 5 min cache
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
-    retry: 2, 
+    retry: 2,
     meta: {
       onError: (error: Error) => handleApiError(error, 'Loading maps')
+    }
+  });
+
+  const {
+    data: events = [],
+    isLoading: isLoadingEvents,
+    refetch: refetchEvents
+  } = useQuery({
+    queryKey: ['events'],
+    queryFn: fetchEvents,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    meta: {
+      onError: (error: Error) => handleApiError(error, 'Loading events')
+    }
+  });
+
+  const {
+    data: leaderboard = [],
+    isLoading: isLoadingLeaderboard,
+    refetch: refetchLeaderboard
+  } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: () => fetchLeaderboards('players'),
+    staleTime: 30 * 60 * 1000, // 30 min cache
+    refetchOnWindowFocus: false,
+    retry: 2,
+    meta: {
+      onError: (error: Error) => handleApiError(error, 'Loading leaderboard')
     }
   });
 
@@ -115,10 +152,16 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
       value={{
         brawlers,
         maps,
+        events,
+        leaderboard,
         isLoadingBrawlers,
         isLoadingMaps,
+        isLoadingEvents,
+        isLoadingLeaderboard,
         refetchBrawlers,
-        refetchMaps
+        refetchMaps,
+        refetchEvents,
+        refetchLeaderboard
       }}
     >
       {children}

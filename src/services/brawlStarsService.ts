@@ -1,5 +1,6 @@
 import { Brawler } from '@/data/types/brawler';
 import { brawlers as localBrawlers } from '@/data/brawlers';
+import { toast } from 'sonner';
 
 // Ensure all brawlers have valid local image paths
 const addLocalImageUrls = (brawlers: Brawler[]): Brawler[] => {
@@ -130,47 +131,85 @@ export const fetchMaps = async (): Promise<any[]> => {
   }
 };
 
-export const getBrawlerRecommendations = async (
-  gameMode: string,
-  map?: string,
-  teamBrawlers: number[] = []
-): Promise<Brawler[]> => {
+export const fetchEvents = async () => {
   try {
-    // In a real app, we'd call an API with these parameters
-    // For now, we'll just return some mock data
-    const allBrawlers = await fetchBrawlers();
+    const cachedEvents = localStorage.getItem('brawl-events-cache');
+    if (cachedEvents) {
+      const cache = JSON.parse(cachedEvents);
+      if (Date.now() - cache.timestamp < 5 * 60 * 1000) { // 5 min cache
+        return cache.data;
+      }
+    }
+
+    const response = await fetch('https://api.brawlify.com/v1/events', {
+      signal: AbortSignal.timeout(5000)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Events API responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
     
-    // Simulate some recommendation logic
-    const recommendations = allBrawlers
-      .filter(brawler => !teamBrawlers.includes(brawler.id))
-      .map(brawler => ({
-        ...brawler,
-        compatibility: Math.floor(Math.random() * 100) // Random compatibility score
-      }))
-      .sort((a, b) => (b.compatibility || 0) - (a.compatibility || 0))
-      .slice(0, 5);
-    
-    return recommendations;
+    // Cache the response
+    localStorage.setItem('brawl-events-cache', JSON.stringify({
+      data: data.active || [],
+      timestamp: Date.now(),
+    }));
+
+    return data.active || [];
   } catch (error) {
-    console.error('Error getting brawler recommendations:', error);
-    throw new Error(error instanceof Error ? error.message : 'Failed to get recommendations');
+    console.error('Error fetching events:', error);
+    return [];
   }
 };
 
-export const getTeamSynergy = async (brawlerIds: number[]): Promise<number> => {
+export const fetchPlayerStats = async (playerTag: string) => {
   try {
-    // In a real app, we'd call an API to calculate team synergy
-    // For now, we'll just return a random score
-    
-    // More brawlers should generally have better synergy up to a point
-    const baseScore = Math.min(brawlerIds.length * 20, 60);
-    
-    // Add some randomness
-    const randomFactor = Math.floor(Math.random() * 40);
-    
-    return Math.min(baseScore + randomFactor, 100);
+    const response = await fetch(`https://api.brawlify.com/v1/players/${playerTag}`, {
+      signal: AbortSignal.timeout(5000)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Player API responded with status ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error calculating team synergy:', error);
-    throw new Error(error instanceof Error ? error.message : 'Failed to calculate team synergy');
+    console.error('Error fetching player stats:', error);
+    throw error;
+  }
+};
+
+export const fetchLeaderboards = async (type: 'players' | 'clubs' = 'players') => {
+  try {
+    const cachedLeaderboard = localStorage.getItem(`brawl-${type}-leaderboard-cache`);
+    if (cachedLeaderboard) {
+      const cache = JSON.parse(cachedLeaderboard);
+      if (Date.now() - cache.timestamp < 30 * 60 * 1000) { // 30 min cache
+        return cache.data;
+      }
+    }
+
+    const response = await fetch(`https://api.brawlify.com/v1/leaderboards/${type}`, {
+      signal: AbortSignal.timeout(5000)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Leaderboard API responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Cache the response
+    localStorage.setItem(`brawl-${type}-leaderboard-cache`, JSON.stringify({
+      data: data.list || [],
+      timestamp: Date.now(),
+    }));
+
+    return data.list || [];
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    return [];
   }
 };
