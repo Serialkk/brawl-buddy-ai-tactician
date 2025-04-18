@@ -18,7 +18,6 @@ const queryClient = configureQueryClient();
 
 // Lazy loaded pages
 const Index = lazy(() => import("./pages/Index"));
-const Auth = lazy(() => import("./pages/Auth"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Profile = lazy(() => import("./pages/Profile"));
 
@@ -34,7 +33,6 @@ const App = () => (
               <BrowserRouter>
                 <Suspense fallback={<DefaultLoadingComponent />}>
                   <Routes>
-                    <Route path="/auth" element={<Auth />} />
                     <Route element={<ProtectedRoute />}>
                       <Route path="/" element={<Index />} />
                       <Route path="/profile" element={<Profile />} />

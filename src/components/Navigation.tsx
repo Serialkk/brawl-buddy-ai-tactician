@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Calendar, Users, Map, BarChart, Clock, Search, Brain } from 'lucide-react';
+import { LayoutDashboard, Calendar, Users, Map, BarChart, Clock, Search, Brain, LogIn } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +12,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { useNavigate } from 'react-router-dom';
+import { toast } from "sonner";
 
 interface NavigationProps {
   activeTab: string;
@@ -22,6 +24,23 @@ interface NavigationProps {
 const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const handleSignIn = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: 'demo@brawlbuddy.app',
+        password: 'demo123',
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Logged in successfully!');
+    } catch (error: any) {
+      toast.error(error.message || 'Error signing in');
+    }
+  };
 
   // Extract user's email and get the first letter for avatar fallback
   const userEmail = user?.email || '';
@@ -121,23 +140,34 @@ const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
         </div>
         
         <div className="p-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-2 w-full justify-start">
-                <Avatar className="w-6 h-6">
-                  <AvatarImage src={user?.user_metadata?.avatar_url} />
-                  <AvatarFallback>{userInitial}</AvatarFallback>
-                </Avatar>
-                <span>{userName}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="gap-2 w-full justify-start">
+                  <Avatar className="w-6 h-6">
+                    <AvatarImage src={user?.user_metadata?.avatar_url} />
+                    <AvatarFallback>{userInitial}</AvatarFallback>
+                  </Avatar>
+                  <span>{userName}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button 
+              onClick={handleSignIn}
+              variant="default" 
+              className="w-full justify-start gap-2"
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </Button>
+          )}
         </div>
       </div>
     </nav>
